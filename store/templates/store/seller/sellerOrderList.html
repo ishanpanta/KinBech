@@ -1,0 +1,41 @@
+{% extends 'store/seller/sellerMain.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<div style="margin-top:0.5rem;">
+    <h3 class="new_order_text">All Orders</h3>
+    <!-- <hr style="width:87%;margin-left:auto;margin-right:auto;"> -->
+</div>
+
+<div class="col-md-10 reco-center" style="margin-left:2.5rem;margin-top:1.5rem;">
+
+    {% for order in allorders %}
+    <div class="recom" onclick="window.location='../seller-order-detail/{{order.id}}/'">
+        <div class="">
+            {% for oi in order.orderitem_set.all|slice:":1" %}
+            {% if oi.product.seller == request.user.seller %}
+            <img class="" id="recom-image" src="{{oi.product.imageURL}}"
+                onerror=this.src="{% static 'images/default-image.jpg' %}" alt="">
+            {% endif %}
+            {% endfor %}
+        </div>
+        <div class="text-part">
+            <h5>#ORDER_{{order.id}}</h5>
+            <h6>{{order.customer}}</h6>
+
+            <!-- Date -->
+            {% for oi in order.orderitem_set.all|slice:":1" %}
+            {% if oi.product.seller == request.user.seller %}
+            <h6 style="color: rgb(63, 63, 63);">{{oi.date_added}}</h6>
+            {% else %}
+            <h6 style="color: rgb(63, 63, 63);">{{order.date_ordered}}</h6>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock content %}

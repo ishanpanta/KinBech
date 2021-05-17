@@ -1,0 +1,20 @@
+{% extends "store/seller/sellerMain.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row" style="margin-top:2.2rem;">
+        <div class="col-md-10 mx-auto">
+            <h3>Add new Product</h3>
+            <hr>
+
+            <!-- since we are uploading image from the same form we have to define enctype -->
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{form.as_p}}
+                <button class="btn btn-success">Submit Data</button>
+            </form><br>
+        </div>
+    </div>
+</div>
+{% endblock content %}

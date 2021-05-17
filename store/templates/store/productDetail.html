@@ -1,0 +1,208 @@
+{% extends 'store/main.html' %}
+{% load humanize %}
+{% load static %}
+{% block content %}
+<div class="col-lg-12" style="padding-top:135px;">
+    <div class="main-content">
+        <!-- image and add-to-cart button -->
+        <div class="image-container">
+            <div class="image-collection">
+                <!-- multiple Images -->
+                <div class="mini-images">
+
+
+                    {% for pi in product.productimage_set.all %}
+
+                    {% if forloop.counter > 0 and forloop.counter <= 1 %} <!-- Mini main image -->
+                        <a href="{{product.imageURL}}" target="_blank">
+                            <div class="mini-image-collection">
+                                <img src="{{product.imageURL}}" class="img-fluid" name="own_img" alt=""
+                                    onmouseover="console.log(main_img.src = own_img.src)">
+                            </div>
+                        </a>
+                        {% endif %}
+
+                        <!-- collections of images -->
+                        <a href="{{pi.image.url}}" target="_blank">
+                            <div class="mini-image-collection">
+                                <img src="{{pi.image.url}}" class="img-fluid imgs" name="sub_img" alt="">
+                            </div>
+                        </a>
+                        {% endfor %}
+                </div>
+                <!-- Main Image -->
+                <div class="main-image">
+                    <a href="{{product.imageURL}}" target="_blank">
+                        <img class="image" src="{{product.imageURL}}" name="main_img"
+                            onerror=this.src="{% static 'images/default-image.jpg' %}">
+                    </a>
+                </div>
+            </div>
+
+            {% if product.quantity > 0 %}
+            <button class="update-cart" data-product="{{product.id}}" data-action="add" id="add-btn">
+                <i class="fas fa-shopping-cart" id="icon"></i>Add to cart
+            </button>
+            {% else %}
+            <button class="update-cart" id="add-btn" style="padding-left: 30%;">Out of Stock</button>
+            {% endif %}
+        </div>
+        <!-- Product Description -->
+        <div class="product-description">
+
+            <p style="float:right; color:grey;">
+                <img src="{% static 'images/free-shipping1.png' %}" style="width:100px; padding-left: 20px;" alt="">
+                Free shipping
+            </p>
+
+            <h3 class="product-name">{{product.name}}</h3>
+
+            <p style="color:rgb(40, 99, 226);">User ratings</p>
+
+            <img src="{% static 'images/rating.png' %}" style="width: 120px;" alt="">
+
+            <hr>
+
+            {% if discountPrice == 0.0 %}
+            <h3 style="color:rgb(241, 111, 36);">$ {{product.price}}</h3>
+
+            {% else %}
+            <h3 style="color:rgb(241, 111, 36);"><strike>$ {{product.price}}</strike>&nbsp&nbsp $
+                {{discountPrice|floatformat:2}}</h3>
+            {% endif %}
+
+            {% if product.quantity > 0 %}
+            <h5 style="color:crimson;">Only {{product.quantity}} left in stock - order soon.</h5>
+            {% elif product.quantity == 0 %}
+            <h5 style="color:#F32013;">Out of stock.</h5>
+            {% endif %}
+
+            {% if discountPrice > 0.0 %}
+            <h5>Discount: {{product.discount}} %</h5>
+            {% endif %}
+
+            <br>
+            <h4><strong>About this item</strong></h4>
+            <p>{{product.description}}</p>
+
+            <h4><strong>Warranty</strong></h4>
+            <p>{{product.warranty}}</p>
+
+            <h4><strong>Return Policy</strong></h4>
+            <p>{{product.return_policy}}</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- COMMENT SECTION -->
+<div class="comment-content">
+    <div class="container">
+        <h2>Reviews of {{product.name}} ({{comments.count}})</h2>
+
+        {% if user.is_authenticated %}
+        <form action="/postComment/" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="exampleInputEmail1">Post Review </label>
+                <input type="text" class="form-control mt-2" name="comment" placeholder="Enter Review here..." required>
+            </div>
+
+            <input type="hidden" name="productId" value="{{product.id}}">
+            <input type="hidden" name="parentSno" value="">
+            <button type="submit" class="btn btn-primary my-2">Submit</button>
+        </form>
+        {% else %}
+        <h5 style="color: gray;">Please Login to post a Review</h5>
+        {% endif %}
+
+
+        <!-- Displaying Comments -->
+        {% for comment in comments %}
+        <div class="row" style="padding-left: 0px; padding-top: 10px; padding-bottom: 5px;">
+            <div class="col-md-1">
+                <img class="rounded mx-auto d-block w-100 border border-dark p-2"
+                    src="{% static 'images/user-image.jpg' %}" alt="user">
+            </div>
+            <div class="col-md-11">
+                <b> {{comment.user.username}} </b><span class="time-section">{{comment.timestamp|naturaltime}}</span>
+                <div> {{comment.comment}} </div>
+
+                <!-- REPLY -->
+                <div class="reply mx-0">
+                    <!-- REPLY button Section -->
+                    {% if user.is_authenticated %}
+                    <button class="btn btn-sm btn-primary mt-2" type="button" data-toggle="collapse"
+                        data-target="#replyBox{{comment.sno}}" aria-expanded="false"
+                        aria-controls="replyBox{{comment.sno}}">Reply</button>
+
+                    <div class="collapse" id="replyBox{{comment.sno}}">
+                        <div class="card card-body my-2">
+
+                            <form action="/postComment/" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="comment">Post a reply </label>
+                                    <input type="text" class="form-control" name="comment" placeholder="Reply Review..."
+                                        required>
+                                </div>
+
+                                <input type="hidden" name="productId" value="{{product.id}}">
+                                <input type="hidden" name="parentSno" value="{{comment.sno}}">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+
+                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse"
+                        data-target="#replyBox{{comment.sno}}" aria-expanded="false"
+                        aria-controls="replyBox{{comment.sno}}" disabled>Login to Reply</button>
+                    {% endif %}
+                    <!-- END REPLY button Section -->
+
+
+                    <!-- Display Replies -->
+                    <div class="replies my-2 ">
+                        {% for reply in replies %}
+                        {% if reply.parent.sno == comment.sno %}
+                        <div class="row my-2" style="padding-left: 0px; padding-top: 5px; padding-bottom: -15px;">
+                            <div class="col-md-1 ">
+                                <img class="rounded mx-auto d-block w-75 my-2 border border-dark p-2"
+                                    src="{% static 'images/user-image.jpg' %}" alt="user">
+                            </div>
+                            <div class="col-md-11">
+                                <div class="col-md-11 ">
+                                    <b> {{reply.user.username}} </b> <span
+                                        class="time-section">{{reply.timestamp|naturaltime}}</span>
+                                    <div>{{reply.comment}}</div>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <!-- END Display Replies -->
+
+                </div>
+                <!-- END REPLY -->
+            </div>
+
+        </div>
+        <!-- END Displaying Comments -->
+        {% endfor %}
+
+    </div>
+</div>
+
+<script>
+    var image_collection = document.querySelectorAll(".imgs")
+
+    image_collection.forEach(image => {
+        image.addEventListener('mouseover', function () {
+            main_img.src = image.src
+        })
+    })
+</script>
+{% endblock content %}

@@ -1,0 +1,69 @@
+{% extends 'store/seller/sellerMain.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="container">
+    <div>
+        <h3>Graphs</h3>
+    </div>
+
+    <!-- Portfolio Performance -->
+    {% if orderItemQuantity.quantity__sum > 0 %}
+    <div class="recom-container" style="margin-left:3rem;">
+        <div>
+            <h4>Portfolio Performance</h4>
+            <hr>
+        </div>
+        <div class="total-section">
+            <div class="total-amount-section">
+                <h5 style="color: gray;">Sales Price</h5>
+                <h3 style="color:purple;">$ {{totalPrice|intcomma}}</h3>
+            </div>
+
+            <div class="total-quantity-section">
+                <h5 style="color: gray;">Sales quantity</h5>
+                <h3 style="color:blue;">x {{orderItemQuantity.quantity__sum}}</h3>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <!-- END of Portfolio Performance -->
+
+
+    <!-- Show only if there is new orders if not then hide. -->
+    {% if orders.count > 0 %}
+    <!-- New Orders -->
+    <div class="row recom-container">
+        <h4 class="new_order_text">New Orders</h4>
+
+        <hr style="width:87%;margin-left:auto;margin-right:auto;">
+
+        <div class="col-md-10 reco-center" style="margin-left:2.5rem;">
+
+            {% for order in orders %}
+            <div class="recom" onclick="window.location='../seller-order-detail/{{order.id}}/'">
+                <div class="">
+                    {% for oi in order.orderitem_set.all|slice:":1" %}
+                    {% if oi.product.seller == request.user.seller %}
+                    <img class="" id="recom-image" src="{{oi.product.imageURL}}"
+                        onerror=this.src="{% static 'images/default-image.jpg' %}" alt="">
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="text-part">
+                    <h5>#ORDER_{{order.id}}</h5>
+                    <h6>{{order.customer}}</h6>
+                    <h6 style="color: rgb(63, 63, 63);">{{order.date_ordered}}</h6>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+    {% endif %}
+    <!-- END of New Orders -->
+
+</div>
+{% endblock content %}

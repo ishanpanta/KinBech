@@ -1,0 +1,68 @@
+{% extends 'store/main.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mx-auto">
+            <h3>Order Detail</h3>
+            {% for o in order %}
+            <p><strong>Order ID: </strong>#ORDER_{{o.id}}</p>
+            <p><strong>Order Status: </strong>{{o.order_status}}</p>
+            <p><strong>Order On: </strong> {{o.date_ordered}}({{o.date_ordered|timesince}} ago)</p>
+            <p><strong>Customer Info: </strong>{{o.customer.name}} ({{o.customer.user.email}})</p>
+            {% endfor %}
+            {% for sa in shippingAddress %}
+              <p><strong>Shipping Address: </strong>{{sa.address}}, {{sa.city}}, {{sa.state}} ({{sa.customer.phone}})</p>
+            {% endfor %}
+            <br><h3>Ordered Items</h3>
+            <hr>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>SN</th>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Rate</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for orderItem in orderItems %}
+                    <tr class="cb" id="orderItem">
+                        <td>{{forloop.counter}}</td>
+                        <td><img class="row-image" src="{{orderItem.product.imageURL}}"></td>
+                        <td style="width:25%;"><a target="_blank" href="{% url 'app:productDetail' orderItem.product.id %}">{{orderItem.product.name|truncatechars:30}}</a></td>
+                        <td>$ {{orderItem.product.price|intcomma}}</td>
+                        <td>x{{orderItem.quantity}}</td>
+                        <td class="orderItemPrice">$ {{orderItem.totalPrice|intcomma}}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <th>Total: </th>
+                        <th id="totalPrice"></th>
+                        <!-- <th>$ 1000</th> -->
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    individualOrderItemPrice = document.getElementsByClassName("orderItemPrice")
+    var total = 0
+    
+    for (var i = 0; i < individualOrderItemPrice.length; i++) {
+        total += Number(individualOrderItemPrice[i].innerHTML.replace(/[^0-9.-]+/g,""))
+    }
+    // Fix two decimal points. And, Put comma after thousands place. 
+    document.getElementById("totalPrice").innerHTML = "$ " + total.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); + " /-"
+</script>
+{% endblock content %}

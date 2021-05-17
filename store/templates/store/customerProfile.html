@@ -1,0 +1,92 @@
+{% extends 'store/main.html' %}
+{% load humanize %}
+{% load static %}
+{% block content %}
+<style>
+    a {
+        text-decoration: none;
+        color: rgb(43, 43, 238);
+    }
+
+    a:hover {
+        color: rgb(41, 41, 43);
+    }
+</style>
+<div class="container" style="width:100%;">
+    <div class="row" style="width:100%;padding-left:0;">
+
+        <!-- Detail INformation of customer -->
+        <div class="recom-container" style="width:100%; margin-top:2rem;">
+            <div class="col-md-10" style="padding-bottom:20px; margin-left: 3rem;">
+                <h3>Detail Information</h3>
+                <hr>
+                <h5 style="margin-bottom:0.7rem;"><strong>Name: </strong>{{customer.name}}</h5>
+                <h5 style="margin-bottom:0.7rem;"><strong>Username: </strong>{{customer.user.username}}</h5>
+                <h5 style="margin-bottom:0.7rem;"><strong>Email: </strong>{{customer.user.email}}</h5>
+                <h5 style="margin-bottom:0.7rem;"><strong>Phone: </strong>{{customer.phone}}</h5>
+                <h5 style="margin-bottom:0.7rem;"><strong>Joined on: </strong>{{customer.date_created}}</h5>
+            </div>
+        </div>
+
+        <!-- Previous Orders -->
+        <div class="recom-container" style="margin-top: 0; width: 100%;">
+            <h3 style="margin-left:3rem;">Previous Orders</h3>
+            <hr style="width:92%; margin-left:auto; margin-right:auto;">
+
+            {% for orderItem in orderItems %}
+            <div class="order-detail-container">
+                <img class="order-image" src="{{orderItem.product.imageURL}}" style="max-width: 80px;">
+
+                <div class="name-section">
+                    <h5>Name</h5>
+                    <h6><a target="_blank"
+                            href="{% url 'app:productDetail' orderItem.product.slug %}">{{orderItem.product.name|truncatechars:15}}</a>
+                    </h6>
+                </div>
+
+                <div class="quantity-section">
+                    <h5>Quantity</h5>
+                    <h6>x {{orderItem.quantity}}</h6>
+                </div>
+
+                <div class="quantity-section">
+                    <h5>Ordered On</h5>
+                    <h6>{{orderItem.date_added}}</h6>
+                </div>
+
+                <div class="order-status-section">
+                    <h5>Order Status</h5>
+                    <h6>{{orderItem.orderItem_order_status}}</h6>
+                </div>
+
+                <div class="sub-total-section">
+                    <h5>Sub Total</h5>
+                    <h6 class="orderItemPrice">$ {{orderItem.totalPrice|intcomma}}</h6>
+                </div>
+
+                <div class="cancel-order-button">
+                    <a href="{% url 'app:cancel-order' orderItem.id %}" data-toggle="tooltip" data-placement="right"
+                        title="Cancel Order"><img class="cancel-button"
+                            src="{% static 'images/trash-icon-2.png' %}"></img></a>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div style="float:right;margin-right:10rem;">
+                <h5><strong>Total: </strong><span id="totalPrice"></span></h5>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        individualOrderItemPrice = document.getElementsByClassName("orderItemPrice")
+        var total = 0
+
+        for (var i = 0; i < individualOrderItemPrice.length; i++) {
+            total += Number(individualOrderItemPrice[i].innerHTML.replace(/[^0-9.-]+/g, ""))
+        }
+        // Fix two decimal points. And, Put comma after thousands place. 
+        document.getElementById("totalPrice").innerHTML = "$ " + total.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','); + " /-"
+    </script>
+    {% endblock %}

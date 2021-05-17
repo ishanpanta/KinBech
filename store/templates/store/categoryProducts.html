@@ -1,0 +1,84 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+<!-- products -->
+<section id="products" style="padding-top:125px;">
+    <div class="section-title">
+
+        {% for product in products|slice:":1" %}
+        <h2>{{product.category}}</h2>
+        <hr style="width:80%; margin:auto;">
+        {% endfor %}
+    </div>
+
+    <div class="products-center">
+
+        {% for product in products %}
+        <!-- single product -->
+        <div class="product">
+            <div class="img-container">
+                <img src="{{product.imageURL}}" id="product-img" class="img-fluid"
+                    onerror=this.src="{% static 'images/default-image.jpg' %}">
+
+                {% if product.quantity > 0 %}
+                <!-- custom Attributes: data-attribute_name -->
+                <button class="update-cart" id="bag-btn" data-product="{{product.id}}" data-action="add">
+                    <i class="fas fa-shopping-cart"></i>
+                    Add to cart
+                </button>
+                <!-- <button id="bag-btn" onclick="window.location.href='../../login/'">
+                    <i class="fas fa-shopping-cart"></i>
+                    Add to cart
+                </button> -->
+
+                <!-- If quanitiy is less than 0 then add-to-cart garna mildaina -->
+                {% else %}
+                <button class="update-cart" id="bag-btn" disabled>Out of Stock</button>
+                {% endif %}
+            </div>
+            <h3><strong><a href="{% url 'app:productDetail' product.slug %}">{{ product.name }}</a></strong></h3>
+            <h4>${{ product.price}}</h4>
+        </div>
+        <!-- end single products -->
+        {% endfor %}
+    </div>
+
+    <!-- PAGINATION -->
+    <nav aria-label="Page navigation example" style="margin-top:90px;">
+        <ul class="pagination justify-content-center">
+            <!-- previous page -->
+            {% if products.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            {% endif %}
+
+            <!-- current page -->
+            {% for i in products.paginator.page_range %}
+            {% if i == products.number %}
+            <li class="page-item active"><a class="page-link">{{i}}</a></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            <!-- next page -->
+            {% if products.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ products.paginator.num_pages }}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" href="#">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    <!-- end of PAGINATION -->
+</section>
+<!-- end products -->
+{% endblock content %}

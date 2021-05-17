@@ -1,0 +1,25 @@
+{% extends 'store/seller/sellerMain.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<div style="margin-top:1rem;">
+    <h3 style="text-align:center;">Product List</h3>
+    <!-- <hr> -->
+</div>
+
+<div class="reco-center" style="margin-left:1.5rem;">
+    {% for product in products %}
+    <div class="recom" onclick="window.location='../../seller-product-detail/{{product.slug}}/'">
+        <div class="">
+            <img class="" id="recom-image" src="{{product.imageURL}}" alt="">
+        </div>
+        <div class="text-part">
+            <h5>{{product.name|truncatechars:30}}</h5>
+            <h6 style="color:#f09d51;">$ {{product.price|intcomma}}</h6>
+            <h6><b style="color:rgb(90, 89, 89);">Count:</b> {{product.view_count}}</h6>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

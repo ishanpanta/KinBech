@@ -1,0 +1,100 @@
+{% extends 'store/seller/sellerMain.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <!-- Order Detail -->
+        <div class="recom-container" style="width:95%; margin-top:3rem;">
+            <div class="col-md-11 mx-auto" style="padding-bottom: 20px;">
+                <h3>Order Detail</h3>
+                <hr>
+                {% for o in order %}
+                <p><strong>Order ID: </strong>#ORDER_{{o.id}}</p>
+                <!-- to display the order_status of the item -->
+
+                {% for orderItem in orderItems %}
+                <!-- looped for only one time -->
+                {% if forloop.first %}
+                <p><strong>Order Status: </strong>{{orderItem.orderItem_order_status}}</p>
+                <p><strong>Order On: </strong>{{orderItem.date_added}}({{orderItem.date_added|timesince}} ago)</p>
+                {% endif %}
+                {% endfor %}
+
+                <p><strong>Customer Info: </strong>{{o.customer.name}} ({{o.customer.user.email}})</p>
+                {% endfor %}
+
+                {% for sa in shippingAddress %}
+                <p><strong>Shipping Address: </strong>{{sa.address}}, {{sa.city}}, {{sa.state}} ({{sa.customer.phone}})
+                </p>
+                <p><strong>Payment Info: </strong>Cash On Delivery</p>
+                {% endfor %}
+
+                <!-- Change Order Status -->
+                {% for o in order %}
+                <form action="{% url 'app:seller-order-status-change' o.id %}" method="post" class="form_class">
+                    {% csrf_token %}
+                    <select name="status" class="form-control" style="width:auto;">
+                        {% for i,j in allstatus %}
+                        {% for orderitem in orderItems %}
+                        {% if forloop.first %}
+                        <option value="{{i}}">{{j}}</option>
+                        <!-- <option value="{{i}}" {% if i == orderitem.orderItem_order_status %}selected{% endif %} >{{j}}</option> -->
+
+                        {% endif %}
+                        {% endfor %}
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn" style="background-color:rgb(67, 228, 67);"><i
+                            class="fas fa-check"></i></button>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Ordered Items -->
+        <div class="recom-container" style="margin-top: 0; width: 95%;">
+            <h3 style="margin-left:3rem;">Ordered Items</h3>
+            <hr style="width:92%; margin-left:auto; margin-right:auto;">
+
+            {% for orderItem in orderItems %}
+            <div class="order-detail-container">
+                <img class="order-image" src="{{orderItem.product.imageURL}}">
+
+                <div class="name-section">
+                    <h5>Name</h5>
+                    <h6>{{orderItem.product.name|truncatechars:20}}</h6>
+                </div>
+
+                <div class="rate-section">
+                    <h5>Rate</h5>
+                    <h6>$ {{orderItem.product.price|intcomma}}</h6>
+                </div>
+
+                <div class="quantity-section">
+                    <h5>Quantity</h5>
+                    <h6>x {{orderItem.quantity}}</h6>
+                </div>
+
+                <div class="order-status-section">
+                    <h5>Order Status</h5>
+                    <h6>{{orderItem.orderItem_order_status}}</h6>
+                </div>
+
+                <div class="sub-total-section">
+                    <h5>Sub Total</h5>
+                    <h6 class="orderItemPrice">$ {{orderItem.totalPrice|intcomma}}</h6>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div style="float:right;margin-right:2.5rem;">
+                <h5><strong>Total: </strong><span id="totalPrice"></span></h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

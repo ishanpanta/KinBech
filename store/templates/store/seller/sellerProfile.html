@@ -1,0 +1,28 @@
+{% extends 'store/seller/sellerMain.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block content %}
+<div class="recom-container seller-info" style="width:85%;">
+    <div class="seller-profile-image">
+        <a target="_blank" href="{{seller.imageURL}}"><img src="{{seller.imageURL}}" class="seller_img"
+                onerror=this.src="{% static 'images/user-image.jpg' %}"></a>
+    </div>
+    <div class="seller-profile-details">
+        <div class="seller-update-btn-div">
+            <h3>Seller Details</h3>
+            <a href="{% url 'app:seller-profile-update' seller.id %}"><button class="btn btn-dark">Update<i
+                        class="fas fa-edit"></i></button></a>
+        </div>
+        <hr>
+
+        <div class="main-seller-details">
+            <h5><b>Name: </b>{{seller.name}}</h5>
+            <h5><b>Username: </b>{{seller.user.username}}</h5>
+            <h5><b>Email: </b>{{seller.user.email}}</h5>
+            <h5><b>Phone: </b>{{seller.phone}}</h5>
+            <h5><b>Joined on: </b>{{seller.date_created}}</h5>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,154 @@
+<!-- Checkout page -->
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+	<div class="col-lg-6">
+		<!-- shipping information -->
+		<div class="box-element" id="form-wrapper">
+			<form id="form">
+				<div class="shipping-info">
+					<h3>Shipping Information:</h3>
+					<hr>
+					<div class="form-field">
+						<input class="form-control" type="text" name="address" placeholder="Address.." required>
+					</div>
+					<div class="form-field">
+						<input class="form-control" type="text" name="city" placeholder="City.." required>
+					</div>
+					<div class="form-field">
+						<input class="form-control" type="text" name="state" placeholder="State.." required>
+					</div>
+					<div class="form-field">
+						<input class="form-control" type="text" name="zipcode" placeholder="Zip code.." required>
+					</div>
+				</div>
+
+				<hr>
+				<input id="form-button" type="submit" value="Continue" class="btn btn-success w-100">
+			</form>
+		</div>
+
+		<!-- Payment Opitions -->
+		<br>
+		<div class="box-element hidden" id="payment-info">
+			<h4>Payment Opitions</h4>
+			<button id="make-payment" class="btn btn-primary btn-sm w-100"
+				style="font-size: 20px; margin-bottom: 12px;"><img src="{% static 'images/cod_car.png' %}"
+					style="width: 35px; padding-right: 5px;">Cash On Delivery</button>
+			<button id="make-payment" class="btn btn-dark btn-sm w-100" style="font-size: 20px;"><img
+					src="{% static 'images/debit-card.png' %}" style="width: 35px;">Debit or Credit Card</button>
+		</div>
+	</div>
+
+	<!-- order summary -->
+	<div class="col-lg-6">
+		<div class="box-element">
+			<a class="btn btn-outline-dark" href="{% url 'app:cart' %}">&#x2190; Back to Cart</a>
+			<hr>
+			<h3>Order Summary</h3>
+			<hr>
+			{% for item in items %}
+			<div class="cart-row">
+				<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"
+						onerror=this.src="{% static 'images/default-image.jpg' %}"></div>
+				<div style="flex:2">
+					<p class="product-name">{{item.product.name}}</p>
+				</div>
+				<div style="flex:1">
+					<p>${{item.product.price}}</p>
+				</div>
+				<div style="flex:1">
+					<p class="product-quantity">x{{item.quantity}}</p>
+				</div>
+			</div>
+			{% endfor %}
+			<h5>Items: {{order.totalCartQuantity}}</h5>
+			<h5>Total: ${{order.totalCartPrice}}</h5>
+		</div>
+	</div>
+</div>
+
+<script>
+	var productName = document.querySelectorAll(".product-name")
+	var productQuantity = document.querySelectorAll(".product-quantity")
+
+	// EMPTY 2-D array
+	const productNameArray = []
+	const productQuantityArray = []
+
+	// Pushing the name and quanity to the 2-D array
+	productName.forEach(name => {
+		productNameArray.push(name.innerHTML)
+	})
+
+	productQuantity.forEach(quantity => {
+		productQuantityArray.push(quantity.innerHTML.replace("x", ""))
+	})
+
+</script>
+
+<script type="text/javascript">
+	// info to be send to the backend
+	// total price that a single customer spend
+	var totalPriceSpend = '{{order.totalCartPrice}}'
+
+	// hidding the 'continue' button and displaying the 'payments' button after submitting the form
+	var form = document.getElementById('form')
+
+	form.addEventListener('submit', function (e) {
+		// prevent submission means allows the editing the form even after submitting form
+		e.preventDefault()
+		console.log("Form submitted..")
+		document.getElementById('form-button').classList.add('hidden')
+		document.getElementById('payment-info').classList.remove('hidden')
+	})
+
+	// submitting the form (shipping-info) after clicking payment button
+	var payment = document.getElementById('make-payment')
+
+	payment.addEventListener('click', function () {
+		submitFormData()
+	})
+
+	function submitFormData() {
+		console.log("Payment buttom clicked...")
+
+		var userFormData = {
+			'total': totalPriceSpend,
+		}
+
+		var shippingInfo = {
+			'address': form.address.value,
+			'city': form.city.value,
+			'state': form.state.value,
+			'zipcode': form.zipcode.value,
+		}
+
+
+		// fetch api
+		var url = '/process_order/'
+
+		fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': csrftoken,
+			},
+			body: JSON.stringify({ 'form': userFormData, 'shipping': shippingInfo, 'productNameArray': productNameArray, 'productQuantityArray': productQuantityArray, }),
+		})
+
+			.then((response) => response.json())
+
+			.then((data) => {
+				console.log('Sucess: ', data)
+				alert('Transaction completed')
+
+				// return back to the home page
+				window.location.href = "{% url 'app:store' %}"
+			})
+	}
+
+</script>
+
+{% endblock content %}

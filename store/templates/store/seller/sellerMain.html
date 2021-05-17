@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinBech</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"> -->
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+        integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/sellerStyle.css' %}">
+
+</head>
+
+<body>
+
+    <input type="checkbox" id="check">
+
+    <!-- header area start -->
+    <div class="dashboard_header">
+        <label for="check">
+            <i class="fas fa-bars" id="sidebar_btn"></i>
+        </label>
+
+        <!-- <div class="left_area"> -->
+        <a href="{% url 'app:seller-home' %}" class="site-logo" aria-label="homepage"
+            style="font-size:22px;">KinBech</a>
+        <!-- </div> -->
+
+        <!-- Logout And Notification Icon -->
+        <div class="logo_noti">
+            <ul class="nav__list">
+
+                <!-- My Profile -->
+                <li class="nav__list-item">
+                    <a class="nav__link nav__link--btn seller-profile-btn" href="{% url 'app:seller-profile' %}">My
+                        Profile</a>
+                </li>
+
+                <!-- Logout -->
+                <li class="nav__list-item">
+                    <a class="nav__link nav__link--btn nav__link--btn--highlight"
+                        href="{% url 'app:seller-logout' %}">Logout</a>
+                </li>
+
+                <!-- NOTIFICATION ICON -->
+                {% for o in noti_orders %}
+                {% if forloop.last %}
+                <li class="cart-li">
+                    <a title="Notifications" data-toggle="tooltip" data-placement="bottom">
+                        <img id="noti-btn" class="cart-icon" src="{% static 'images/notification-icon.png' %}">
+                    </a>
+                </li>
+
+                <p class="cart-total" id="total">{{forloop.counter}}</p>
+                {% endif %}
+                {% endfor %}
+
+                <!-- show notification icon even if there is no notification -->
+                {% if noti_orders.count == 0 %} <li class="cart-li">
+                    <img id="noti-btn" class="cart-icon" src="{% static 'images/notification-icon.png' %}">
+                </li>
+                <p class="cart-total" id="total">0</p>
+                {% endif %}
+
+                <!-- END OF NOTIFICATION ICON -->
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <!-- end of header area -->
+
+    <!-- sidebar -->
+    <div class="sidebar">
+        <center>
+            <img onClick="window.location.href='../seller-profile/'" src="{{seller.imageURL}}" class="profile_image"
+                onerror=this.src="{% static 'images/user-image.jpg' %}" alt="">
+            <h5 onClick="window.location.href='../seller-profile/'">{{seller.user.username}}</h5>
+        </center>
+
+        <a href="{% url 'app:seller-home' %}"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
+        <a href="{% url 'app:seller-order-list' %}"><i class="fas fa-table"></i><span>All Orders</span></a>
+        <a href="{% url 'app:seller-product-list' %}"><i class="fas fa-shopping-basket"></i><span>All
+                Products</span></a>
+        <a href="{% url 'app:seller-product-add' %}"><i class="fas fa-plus-circle"></i><span>Add Product</span></a>
+        <a href="{% url 'app:seller-logout' %}"><i class="fas fa-th"></i><span>Visit site</span></a>
+
+    </div>
+    <!-- end of sidebar -->
+
+    <!-- Notification -->
+    <div class="notification-overlay">
+        <div class="notification">
+            <span class="close-notification">
+                <i class="fas fa-window-close"></i>
+            </span>
+            <h2>Notifications</h2>
+
+            <div class="notification-content">
+                {% for o in noti_orders %}
+                <div class="noti-main-content" onclick="window.location='../seller-order-detail/{{o.id}}/'">
+                    <div class="noti-order-info">
+                        <h5 class="noti-order-id">#ORDER_{{o.id}}</h5>
+                        <p><strong>ID: </strong>{{o.transaction_id}}</p>
+                        <p>{{o.customer}}</p>
+                        <p>{{o.date_ordered}}</p>
+                    </div>
+
+                    <!-- show atleast three products -->
+                    <div class="noti-product-info">
+                        {% for oi in o.orderitem_set.all|slice:":3" %}
+                        {% if oi.product.seller == request.user.seller %}
+                        <img src="{{oi.product.imageURL}}" class="img-fluid" style="height: 30px;" alt="">
+                        <p>{{oi.product.name|truncatechars:18}}</p>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- if there is no notification then show no orders -->
+                {% if noti_orders.count == 0 %}
+                <p style="color:rgb(94, 94, 94); text-align: center;">Sorry, No New Orders or Comments...</p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <!-- End of Notification -->
+
+    <!-- Content -->
+    <div class="content">
+        <div style="padding-top: 70px;">
+            {% block content %}
+
+            {% endblock content %}
+        </div>
+    </div>
+
+
+    <script src="{% static 'js/seller.js' %}"></script>
+
+    <!-- Bootstrap Js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <script>
+        ////////////////////////// TOOLTIP //////////////////////////
+        //Show tooltip on page load
+        $('a').tooltip('show');
+
+        //Hide tooltip after three seconds
+        setTimeout(function () {
+            $('a').tooltip('dispose')
+        }, 3000)
+
+
+        ////////////////////////// NOTIFICATION sound //////////////////////////
+        // sound will be played only if there is any items in the notification.
+        const notiSound = new Audio("{% static 'audio/notification.mp3' %}")
+        var totalCart = document.getElementById("total")
+
+        window.onload = function () {
+            if (totalCart.innerHTML > 0) {
+                // notiSound.play()
+            }
+        }
+    </script>
+
+</body>
+
+</html>
