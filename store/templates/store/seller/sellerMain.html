@@ -20,6 +20,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/sellerStyle.css' %}">
 
+    <!-- Plotly js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
 <body>
@@ -62,15 +64,30 @@
                     </a>
                 </li>
 
+                <!-- IF any items is canceled and also there is a new order (noti_orders)-->
+                {% if canceledOrderItem.count > 0 %}
+                <p class="cart-total" id="total">{{forloop.counter|add:canceledOrderItem.count}}</p>
+
+                <!-- No item has been canceled (canceledOrderItem) -->
+                {% else %}
                 <p class="cart-total" id="total">{{forloop.counter}}</p>
+                {% endif %}
+
                 {% endif %}
                 {% endfor %}
 
                 <!-- show notification icon even if there is no notification -->
-                {% if noti_orders.count == 0 %} <li class="cart-li">
+                {% if noti_orders.count == 0 and canceledOrderItem.count == 0 %} <li class="cart-li">
                     <img id="noti-btn" class="cart-icon" src="{% static 'images/notification-icon.png' %}">
                 </li>
                 <p class="cart-total" id="total">0</p>
+
+                <!-- If there is no new order but there is canceled item then show the no of canceled item -->
+                {% elif noti_orders.count == 0 and canceledOrderItem.count > 0 %}
+                <li class="cart-li">
+                    <img id="noti-btn" class="cart-icon" src="{% static 'images/notification-icon.png' %}">
+                </li>
+                <p class="cart-total" id="total">{{canceledOrderItem.count}}</p>
                 {% endif %}
 
                 <!-- END OF NOTIFICATION ICON -->
@@ -108,6 +125,20 @@
             <h2>Notifications</h2>
 
             <div class="notification-content">
+
+                <!-- Canceled OrderItem -->
+                {% for cancelItem in canceledOrderItem %}
+                <div class="cancel-item-info"
+                    onclick="window.location='../seller-order-detail/{{cancelItem.order.id}}/'">
+                    <img src="{{cancelItem.product.imageURL}}" alt="" style="height: 50px;">
+                    <h5>{{cancelItem.product.name}}</h5>
+                    <h6>#ORDER_{{cancelItem.order.id}}</h6>
+                    <h6>{{cancelItem.orderItem_order_status}}</h6>
+                </div>
+                {% endfor %}
+                <!-- END OF Canceled OrderItem -->
+
+                <!-- New Orders -->
                 {% for o in noti_orders %}
                 <div class="noti-main-content" onclick="window.location='../seller-order-detail/{{o.id}}/'">
                     <div class="noti-order-info">
@@ -128,9 +159,10 @@
                     </div>
                 </div>
                 {% endfor %}
+                <!-- End of New orders -->
 
                 <!-- if there is no notification then show no orders -->
-                {% if noti_orders.count == 0 %}
+                {% if noti_orders.count == 0 and canceledOrderItem.count == 0 %}
                 <p style="color:rgb(94, 94, 94); text-align: center;">Sorry, No New Orders or Comments...</p>
                 {% endif %}
 

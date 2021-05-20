@@ -13,5 +13,6 @@ admin.site.index_title = "Welcome to KinBech Admin Panel"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls', namespace="app")),
+    path('django_plotly_dash/', include('django_plotly_dash.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -33,6 +33,12 @@ urlpatterns = [
     path('sellerLogout/', views.sellerLogout, name="seller-logout"),
 
     path('sellerHome/', views.sellerHome, name="seller-home"),
+    path('views-in-product-graph/', views.viewsInProductGraph,
+         name="views-in-product-graph"),
+    path('quantity-product-graph/', views.quantityProductGraph,
+         name="quantity-product-graph"),
+
+
     path('seller-order-detail/<int:pk>/',
          views.sellerOrderDetail.as_view(), name="seller-order-detail"),
     path('seller-order-list/', views.sellerOrderList, name="seller-order-list"),
@@ -48,7 +54,7 @@ urlpatterns = [
          views.sellerProductDetail, name="seller-product-detail"),
     path('seller-profile/', views.sellerProfile, name="seller-profile"),
 
-    path('seller-profile-update/<int:pk>', views.sellerProfileUpdate.as_view(),
+    path('seller-profile-update/<int:pk>', views.sellerProfileUpdate,
          name="seller-profile-update"),
     path('seller-product-update/<slug:slug>',
          views.sellerProductUpdate.as_view(), name="seller-product-update"),

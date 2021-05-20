@@ -15,9 +15,10 @@ from django.views.generic.edit import DeleteView, UpdateView
 from .models import *
 from .forms import *
 from .utils import cartData
-import json
+from operator import itemgetter
 import datetime
 import decimal
+import json
 
 
 # Registration
@@ -72,6 +73,7 @@ def store(request):
     data = cartData(request)
     cartItems = data['cartItems']
 
+    # RECOMMENDATION
     if request.user.is_authenticated:
         customer = request.user.customer
 
@@ -91,7 +93,7 @@ def store(request):
             try:
                 # getting the category name of the search_product
                 get_searchedPro_category = Category.objects.filter(
-                    Q(product__name__icontains=search_product) | Q(product__description__icontains=search_product))[0]
+                    Q(product__name__icontains=search_product) | Q(product__description__icontains=search_product) | Q(title__icontains=search_product))[0]
                 # print("Search Cate: ", get_searchedPro_category)
             except:
                 get_searchedPro_category = None
@@ -136,20 +138,56 @@ def store(request):
         recom_searched_products = None
         recom_viewed_products = None
 
-    # getting all the categories
-    categories = Category.objects.all()
-
     # print(recom_searched_products)
     # print(recom_viewed_products)
 
-    # MOst viewed products
+    # END OF RECOMMENDATION
+
+    # getting all the categories
+    categories = Category.objects.all()
+
+    # MOST VIEWED products
     most_viewed_products = Product.objects.all().order_by("-view_count")
 
-    # Best selling products
-    best_selling_products = OrderItem.objects.all().order_by("-quantity")
+    # The end OF MOST VIEWED
 
-    context = {"cartItems": cartItems, "categories": categories,
-               "recom_searched_products": recom_searched_products, "recom_viewed_products": recom_viewed_products, "most_viewed_products": most_viewed_products, "best_selling_products": best_selling_products, }
+    # BEST SELLING products
+
+    # list of name, total_quantity and price of ordered products
+    orderItem_name = []
+    orderItem_total_quantity = []
+
+    products = Product.objects.all()
+
+    # adding the total quantity of product sold till now to the above list
+    for prod in products:
+        orderItems = OrderItem.objects.filter(
+            product__name=prod.name).aggregate(Sum('quantity'))
+
+        # access the aggregate sum of total quantity of the products
+        total_product_quantity = orderItems['quantity__sum']
+
+        # if the product has not been sold till now then it wouldnot be added in the list and hence in the graph
+        if total_product_quantity == None:
+            pass
+        else:
+            orderItem_name.append(prod.name)
+            orderItem_total_quantity.append(total_product_quantity)
+
+    # 2-D list formed of orderItem_name and orderItem_total_quantity
+    orderItem_name_quantity_2D = list(
+        zip(orderItem_name, orderItem_total_quantity))
+
+    # sorting according to highest quantity
+    orderItem_name_quantity_2D.sort(key=itemgetter(1), reverse=True)
+
+    # THE END OF BEST SELLING products
+
+    # to hide best_seller_products if there is no order till now
+    orderItems = OrderItem.objects.all()
+
+    context = {"cartItems": cartItems, "categories": categories, "products": products, "orderItems": orderItems,
+               "recom_searched_products": recom_searched_products, "recom_viewed_products": recom_viewed_products, "most_viewed_products": most_viewed_products, "orderItem_name_quantity_2D": orderItem_name_quantity_2D}
     return render(request, "store/store.html", context)
 
 
@@ -207,6 +245,7 @@ def cancelOrder(request, pk):
     orderItems = OrderItem.objects.filter(id=pk)
     for orderItem in orderItems:
         orderItem.orderItem_order_status = "Order Canceled"
+        orderItem.noti_status = True
         orderItem.save()
     return redirect(reverse_lazy("app:customer-profile"))
 
@@ -273,6 +312,7 @@ def sellerHome(request):
     orders = Order.objects.filter(orderitem__product__seller=seller, complete=True,
                                   orderitem__orderItem_order_status="Order Received").distinct().order_by("-id")
 
+    # PORTFOLIO PERFORMANCE
     # Total quanity sold till now
     orderItemQuantity = OrderItem.objects.filter(
         product__seller=seller, order__complete=True).aggregate(Sum('quantity'))
@@ -285,25 +325,208 @@ def sellerHome(request):
     for oi in orderItem:
         totalPrice += oi.quantity * oi.product.price
 
+    # END OF PORTFOLIO PERFORMANCE
+
+    # BAR-CHART (Total Income)
+
+    # list of name, total_quantity and price of ordered products
+    orderItem_name = []
+    orderItem_total_quantity = []
+    orderItem_price = []
+
+    products = Product.objects.filter(seller=seller)
+
+    # adding the total quantity of product sold till now to the above list
+    for prod in products:
+        orderItems = OrderItem.objects.filter(
+            product__seller=seller, product__name=prod.name).aggregate(Sum('quantity'))
+
+        product = Product.objects.get(name=prod)
+
+        # access the aggregate sum of total quantity of the products
+        total_product_quantity = orderItems['quantity__sum']
+
+        # if the product has not been sold till now then it wouldnot be added in the list and hence in the graph
+        if total_product_quantity == None:
+            pass
+        else:
+            orderItem_name.append(prod.name)
+            orderItem_total_quantity.append(total_product_quantity)
+            orderItem_price.append(product.price)
+
+    # multiplying two lists (quantity and price) and putting it to the orderItem_total_price_decimal list
+    orderItem_total_price_decimal = [quantity * price for quantity,
+                                     price in zip(orderItem_total_quantity, orderItem_price)]
+
+    # converting decimal price into float price and further converting to list
+    orderItem_total_price = list(map(float, orderItem_total_price_decimal))
+
+    # x and y component
+    x = orderItem_name
+    y = orderItem_total_price
+
+    # Bar chart colors
+    colors = ['limegreen', 'pink'] * len(orderItem_name)
+
+    # Create a trace json to hold graph data
+    trace = {
+        'x': x,
+        'y': y,
+        'type': 'bar',
+        'name': x,
+        'marker': {'color': colors}
+    }
+
+    # Configure the chart's layout
+    layout = {'title': {'text': 'Total Income',
+                        'font': {
+                                'color': '#ffffff'}
+                        },
+              'xaxis': {'title': "Product's Name", 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'false'},
+              'yaxis': {'title': 'Total Price ($)', 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'true'},
+              'plot_bgcolor': '#38393d', 'paper_bgcolor': '#38393d', 'bordercolor': '#ffffff'}
+
     context = {"orders": orders, "seller": seller,
-               'orderItemQuantity': orderItemQuantity, 'totalPrice': totalPrice, }
+               'orderItemQuantity': orderItemQuantity, 'totalPrice': totalPrice, "trace": trace,
+               "layout": layout, "title": "Total Income"}
+
     return render(request, "store/seller/sellerHome.html", context)
+
+
+# No of views of a product
+def viewsInProductGraph(request):
+    seller = request.user.seller
+
+    # BAR-CHART (No of Views)
+
+    # creating a list of all product names with its view_count
+    all_product_names = []
+    all_product_counts = []
+
+    product_names = Product.objects.filter(seller=seller)
+
+    for product in product_names:
+        all_product_names.append(product.name)
+        all_product_counts.append(product.view_count)
+
+    # x and y component
+    x = all_product_names
+    y = all_product_counts
+
+    # Bar chart colors
+    colors = ['limegreen', 'pink'] * len(all_product_names)
+
+    # Create a trace json to hold graph data
+    trace = {
+        'x': x,
+        'y': y,
+        'type': 'bar',
+        'name': x,
+        'marker': {'color': colors}
+    }
+
+    # Configure the chart's layout
+    layout = {'title': {'text': 'Number of views in a Product',
+                        'font': {
+                            'color': '#ffffff'}
+                        },
+              'xaxis': {'title': "Product's Name", 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'false'},
+              'yaxis': {'title': 'View Count', 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'true'},
+              'plot_bgcolor': '#38393d', 'paper_bgcolor': '#38393d', 'bordercolor': '#ffffff'}
+
+    # END OF BAR-CHART (No of Views)
+
+    context = {"trace": trace, "layout": layout,
+               "title": "Number of views in a Product"}
+
+    return render(request, "store/seller/viewsInProductGraph.html", context=context)
+
+
+# Total quantity sold for an product
+def quantityProductGraph(request):
+    seller = request.user.seller
+
+    # list of name, total_quantity and price of ordered products
+    orderItem_name = []
+    orderItem_total_quantity = []
+
+    products = Product.objects.filter(seller=seller)
+
+    # adding the total quantity of product sold till now to the above list
+    for prod in products:
+        orderItems = OrderItem.objects.filter(
+            product__seller=seller, product__name=prod.name).aggregate(Sum('quantity'))
+
+        # access the aggregate sum of total quantity of the products
+        total_product_quantity = orderItems['quantity__sum']
+
+        # if the product has not been sold till now then it wouldnot be added in the list and hence in the graph
+        if total_product_quantity == None:
+            pass
+        else:
+            orderItem_name.append(prod.name)
+            orderItem_total_quantity.append(total_product_quantity)
+
+    # List process THE END
+
+    # Main Scatter Plot section
+
+    # color
+    colors = ['limegreen', ] * len(orderItem_name)
+
+    # Create a trace json to hold graph data
+    trace = {
+        'x': orderItem_name,
+        'y': orderItem_total_quantity,
+        'type': 'scatter',
+        'marker': {'color': colors},
+    }
+
+    # Configure the chart's layout
+    layout = {'title': {'text': 'Total Quantity Sold',
+                        'font': {
+                            'color': '#ffffff'}
+                        },
+              'xaxis': {'title': "Product's Name", 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'false'},
+              'yaxis': {'title': 'Quantity', 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'true'},
+              'plot_bgcolor': '#38393d', 'paper_bgcolor': '#38393d', 'bordercolor': '#ffffff'}
+
+    # Pass trace and layout in the context
+    context = {"trace": trace, "layout": layout,
+               "title": "Total Quantity Sold"}
+
+    return render(request, "store/seller/quantityProductGraph.html", context=context)
 
 
 def sellerProfile(request):
     seller = request.user.seller
 
     context = {'seller': seller, }
-    return render(request, "store/seller/storeProfile.html", context)
+    return render(request, "store/seller/sellerProfile.html", context)
 
 
-class sellerProfileUpdate(UpdateView):
-    template_name = "store/seller/sellerProfileUpdate.html"
-    queryset = Seller.objects.all()
-    form_class = SellerProfileUpdateForm
+# class sellerProfileUpdate(UpdateView):
+#     template_name = "store/seller/sellerProfileUpdate.html"
+#     queryset = Seller.objects.all()
+#     form_class = SellerProfileUpdateForm
 
-    def get_success_url(self):
-        return reverse_lazy("app:seller-profile")
+#     def get_success_url(self):
+#         return reverse_lazy("app:seller-profile")
+
+def sellerProfileUpdate(request, pk):
+    seller = request.user.seller
+    form = SellerProfileUpdateForm(instance=seller)
+    if request.method == 'POST':
+        form = SellerProfileUpdateForm(request.POST, instance=seller)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse_lazy("app:seller-profile"))
+
+    context = {
+        "seller": seller,
+        "form": form
+    }
+    return render(request, "store/seller/sellerProfileUpdate.html", context)
 
 
 class sellerOrderDetail(DetailView):

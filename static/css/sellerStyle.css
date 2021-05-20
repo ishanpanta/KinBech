@@ -9,6 +9,7 @@ body {
 
 .dashboard_header {
   position: fixed;
+  z-index: 1;
   background-color: #22242a;
   padding: 20px;
   width: 100%;
@@ -208,6 +209,22 @@ label #sidebar_btn:hover {
   margin-bottom: 2rem;
 }
 
+/* Cancel Item */
+.cancel-item-info {
+  box-shadow: hsl(0, 0%, 94%) 0 0 8px;
+  background-color: #fff;
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  padding: 5px 0px;
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+/* ENd of Cancel Items */
+
 .noti-main-content {
   box-shadow: hsl(0, 0%, 94%) 0 0 8px;
   background-color: #fff;
@@ -219,14 +236,13 @@ label #sidebar_btn:hover {
 
   padding-left: 10px;
   padding-top: 5px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   cursor: pointer;
 }
 
-.noti-main-content:hover {
+.noti-main-content:hover,
+.cancel-item-info:hover {
   box-shadow: hsl(0, 1%, 74%) 0 0 16px;
-  background-color: #fff;
-  border-radius: 4px;
 }
 
 .noti-product-info {
@@ -274,6 +290,27 @@ label #sidebar_btn:hover {
   margin-left: 3rem;
   padding: 0;
 }
+
+/* BAR GRAPH */
+#bar_chart {
+  width: 92%;
+  margin: 4rem auto 2rem;
+}
+
+#scatter_bar_chart {
+  width: 90%;
+  margin: 7rem auto;
+}
+
+.graph-buttons {
+  margin-left: 30%;
+}
+
+.graph-buttons a:last-child {
+  margin-left: 3rem;
+}
+/* END of Bar Graph */
+
 /* End of Seller Home Page */
 
 /* Seller Order Detail */

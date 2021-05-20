@@ -4,10 +4,18 @@
 
 {% block content %}
 
-<div class="container">
-    <div>
-        <h3>Graphs</h3>
+{% if totalPrice > 0 %} <div class="container">
+
+    <div id="bar_chart"></div>
+
+    <!-- BUTTONS -->
+    <div class="graph-buttons">
+        <a href="{% url 'app:views-in-product-graph' %}"><button type="button" class="btn btn-outline-dark">GRAPH: Views
+                In Products</button></a>
+        <a href="{% url 'app:quantity-product-graph' %}"><button type="button" class="btn btn-outline-dark">GRAPH:
+                Sold Product's Quantity</button></a>
     </div>
+    <!-- End of buttons -->
 
     <!-- Portfolio Performance -->
     {% if orderItemQuantity.quantity__sum > 0 %}
@@ -66,4 +74,19 @@
     <!-- END of New Orders -->
 
 </div>
+
+<!-- if there is no order for an seller -->
+{% else %}
+<div class="container" style="text-align:center; margin-top:20%;">
+    <h1 style="color:rgb(61, 61, 61);">Welcome! {{request.user.seller}}</h1>
+</div>
+
+{% endif %}
+
+<script>
+    trace = {{ trace | safe }}
+    layout = {{ layout | safe }}
+    var data = [trace];
+    Plotly.newPlot('bar_chart', data, layout, { showSendToCloud: true, responsive: true });
+</script>
 {% endblock content %}

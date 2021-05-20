@@ -117,9 +117,9 @@
 <!-- END of Recommendation -->
 
 
-<!-- Most Viewed Products -->
+<!-- Most Popular Products -->
 <div class="recom-container">
-    <h3 style="text-align:center;">Most Viewed Products</h3>
+    <h3 style="text-align:center;">Most Popular Products</h3>
 
     <div class="most-viewed-center">
         {% for product in most_viewed_products|slice:":5" %}
@@ -135,26 +135,28 @@
         {% endfor %}
     </div>
 </div>
-<!-- End of Most Viewed Products -->
+<!-- End of Most Popular Products -->
 
 
 <!-- Best Selling Products -->
-{% if best_selling_products.count > 0 %}
-<div class="recom-container">
+{% if orderItems.count > 0 %} <div class="recom-container">
     <h3 style="text-align:center;">Best Selling Products</h3>
 
     <div class="most-viewed-center">
-        {% for orderItem in best_selling_products %}
-        <div class="recom" onclick="window.location='/product-detail/{{orderItem.product.slug}}/'">
+        {% for oi_name_quan in orderItem_name_quantity_2D|slice:":5" %}
+        {% for product in products %}
+        {% if product.name == oi_name_quan.0 %}
+        <div class="recom" onclick="window.location='/product-detail/{{product.slug}}/'">
             <div class="image-recom-div">
-                <img class="" id="recom-image" src="{{orderItem.product.imageURL}}" alt="">
+                <img class="" id="recom-image" src="{{product.imageURL}}" alt="">
             </div>
             <div class="text-part">
-                <h5>{{orderItem.product.name|truncatechars:30}}</h5>
-                <!-- <h6 style="color:#f09d51;">$ {{orderItem.product.price}}</h6> -->
-                <h6>{{orderItem.quantity}}</h6>
+                <h5>{{product.name|truncatechars:30}} <span style="color:grey">({{oi_name_quan.1}})</span></h5>
+                <h6 style="color:#f09d51;">$ {{product.price}}</h6>
             </div>
         </div>
+        {% endif %}
+        {% endfor %}
         {% endfor %}
     </div>
 </div>
