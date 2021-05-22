@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView, View, DetailView
 
@@ -185,6 +185,25 @@ def store(request):
 
     # to hide best_seller_products if there is no order till now
     orderItems = OrderItem.objects.all()
+
+    # COOKIES
+    # setting cookies items to the database
+    if request.user.is_authenticated:
+
+        # access CART cookie
+        try:
+            cart = json.loads(request.COOKIES['cart'])
+            print("CART aayo: ", cart)
+        except:
+            cart = {}
+
+        # sending all the cookie items to the createUpdateOrder function
+        # NOTE: cart ko quantity kati xa tesko anusar cart ma banuna
+        for i in cart:
+            quantity = cart[i]['quantity']
+            createUpdateOrder(request, i, '', quantity)
+
+    # END OF COOKIES
 
     context = {"cartItems": cartItems, "categories": categories, "products": products, "orderItems": orderItems,
                "recom_searched_products": recom_searched_products, "recom_viewed_products": recom_viewed_products, "most_viewed_products": most_viewed_products, "orderItem_name_quantity_2D": orderItem_name_quantity_2D}
@@ -825,26 +844,41 @@ def searchItems(request):
     return render(request, "store/search.html", context)
 
 
-# to send the add to cart data to the backend
-def updateItem(request):
-    # parse the data and is stored as python dictionary
-    data = json.loads(request.body)
-    productId = data['productId']
-    action = data['action']
-
+# making this function so that we dont have to repeat again
+def createUpdateOrder(request, productId, action, quantity=0):
     customer = request.user.customer
     product = Product.objects.get(id=productId, disable=False)
     order, created = Order.objects.get_or_create(
         customer=customer, complete=False)
 
-    orderItem, created = OrderItem.objects.get_or_create(
-        order=order, product=product)
+    # for cookies OrderItems
+    if quantity != 0:
+
+        # yo garna milxa hola
+        # if OrderItem.objects.filter(product__id=productId, order__id=order.id).exists():
+        #     pass
+
+        if product.quantity >= quantity:
+            orderItem, created = OrderItem.objects.get_or_create(
+                order=order, product=product, quantity=quantity)
+
+        # if the orderItem send from the guest user, qunatity is greater then actual product quantity
+        else:
+            orderItem, created = OrderItem.objects.get_or_create(
+                order=order, product=product, quantity=product.quantity)
+
+    # for those items added from the user in site
+    else:
+        orderItem, created = OrderItem.objects.get_or_create(
+            order=order, product=product)
 
     if action == 'add':
         if orderItem.quantity >= product.quantity:
             orderItem.quantity = orderItem.quantity
+
         else:
             orderItem.quantity = (orderItem.quantity + 1)
+
     elif action == 'remove':
         orderItem.quantity = (orderItem.quantity - 1)
 
@@ -852,6 +886,16 @@ def updateItem(request):
 
     if orderItem.quantity <= 0:
         orderItem.delete()
+
+
+# to send the add to cart data to the backend
+def updateItem(request):
+    # parse the data and is stored as python dictionary
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+
+    createUpdateOrder(request, productId, action)
 
     return JsonResponse('Data was added', safe=False)
 
@@ -883,7 +927,7 @@ def processOrder(request):
         zipcode=data['shipping']['zipcode'],
     )
 
-    # Decrease the product quanity after each purchase
+    # DECREASE the product quanity after each purchase
     name_array = data['productNameArray']
     quanity_array = data['productQuantityArray']
 

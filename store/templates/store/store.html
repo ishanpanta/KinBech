@@ -210,4 +210,12 @@
 </footer>
 <!-- END OF FOOTER -->
 
+<script>
+    {% if user.is_authenticated %}
+    // DELETE CART cookie after checkout
+    // we are not deleting the cart but we are overwriting cart with empty cart object
+    cart = {}
+    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+    {% endif %}
+</script>
 {% endblock content %}

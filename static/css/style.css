@@ -402,7 +402,7 @@ header {
   margin-left: 50px;
   margin-right: 50px;
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 520px auto;
   grid-gap: 2.5rem;
 }
 
@@ -432,12 +432,9 @@ header {
 
 .image {
   display: block;
-  /* margin-left: auto;
-  margin-right: auto; */
-  /* min-width: 450px; */
   height: 300px;
+  max-width: 370px;
   border-radius: 4px;
-  cursor: pointer;
 }
 
 .img-fluid {
@@ -822,7 +819,7 @@ ul {
   box-shadow: hsl(0, 0%, 80%) 0 0 16px;
   background-color: #fff;
   border-radius: 4px;
-  width: 93%;
+  width: 96%;
   padding: 10px;
   margin: 1.5rem auto;
 
@@ -833,16 +830,25 @@ ul {
 
 .order-image {
   display: block;
-
   height: 80px;
+  max-width: 60px;
+  min-width: 60px;
+}
+
+.name-section {
+  width: 110px;
 }
 
 .order-detail-container h5 {
   color: gray;
 }
 
-.order-detail-container h6 {
+.quantity-section h6 {
   text-align: center;
+}
+
+.date-section {
+  width: 190px;
 }
 
 .order-detail-container div {

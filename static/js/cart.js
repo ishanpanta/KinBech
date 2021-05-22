@@ -2,19 +2,48 @@ var updateBtns = document.getElementsByClassName("update-cart")
 
 for (var i = 0; i < updateBtns.length; i++) {
     updateBtns[i].addEventListener('click', function(){
-        // updateBtns[i].innerText = "IN CART"
-        // updateBtns[i].disabled = true
         var productId = this.dataset.product
         var action = this.dataset.action
         console.log("Product ID: ", productId, "Action: ", action)
         console.log("User: ", user)
 
         if (user==="AnonymousUser"){
-            console.log("Not logged in")
+            addCookieItem(productId, action)
         } else {
             updateUserOrder(productId, action)
         }
     })
+}
+
+function addCookieItem(productId, action) {
+    console.log("Not logged in...",)
+
+    if (action == 'add') {
+        if (cart[productId] == null) {
+            cart[productId] = {'quantity':1}
+
+        }else{
+            cart[productId]['quantity'] += 1  
+        }
+    }
+
+    if (action == 'remove') {
+        cart[productId]['quantity'] -= 1
+        
+        if (cart[productId]['quantity'] <= 0) {
+            console.log("Item has been deleted")
+            delete cart[productId]
+        }
+    }
+    
+    // +2 day from now
+    let date = new Date(Date.now() + (86400e3 * 2))
+    date = date.toUTCString()
+
+    // updating the broswer cookie
+    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/; expires=" + date;
+
+    location.reload()
 }
 
 function updateUserOrder(productId, action) {

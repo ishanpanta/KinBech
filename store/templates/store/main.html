@@ -26,7 +26,7 @@
     // var customer = '{{request.user.customer.email}}'
 
     // we have to pass the CSRF token in as POST data with every POST request.
-    function getCookie(name) {
+    function getToken(name) {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -41,7 +41,48 @@
       }
       return cookieValue;
     }
-    const csrftoken = getCookie('csrftoken');
+    const csrftoken = getToken('csrftoken');
+
+    // ADD TO COOKIE
+    // function to getCookie of the cart
+    function getCookie(name) {
+      // Split cookie string and get all individual name=value pairs in an array
+      var cookieArr = document.cookie.split(";");
+
+      // Loop through the array elements
+      for (var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+
+        /* Removing whitespace at the beginning of the cookie name
+        and compare it with the given string */
+        if (name == cookiePair[0].trim()) {
+          // Decode the cookie value and return
+          return decodeURIComponent(cookiePair[1]);
+        }
+      }
+
+      // Return null if not found
+      return null;
+    }
+    var cart = JSON.parse(getCookie('cart'))
+
+    if (cart == null) {
+
+      // creating a cart object
+      cart = {}
+      console.log('Cart Created!', cart)
+
+      // +2 day from now
+      let date = new Date(Date.now() + (86400e3 * 2))
+      date = date.toUTCString()
+
+      // to create cookie. To set our cookie to the broswer cookie.
+      document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/; expires=" + date;
+
+    }
+    console.log(cart)
+
+    // END OF ADD TO COOKIE
   </script>
 
   <!-- link static css file -->

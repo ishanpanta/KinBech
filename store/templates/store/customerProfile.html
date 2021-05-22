@@ -12,7 +12,7 @@
         color: rgb(41, 41, 43);
     }
 </style>
-<div class="container" style="width:100%;">
+<div class="container" style="width:100%;padding:0">
     <div class="row" style="width:100%;padding-left:0;">
 
         <!-- Detail INformation of customer -->
@@ -30,12 +30,12 @@
 
         <!-- Previous Orders -->
         <div class="recom-container" style="margin-top: 0; width: 100%;">
-            <h3 style="margin-left:3rem;">Previous Orders</h3>
-            <hr style="width:92%; margin-left:auto; margin-right:auto;">
+            <h3 style="margin-left:2.3rem;">Previous Orders</h3>
+            <hr style="width:96%; margin-left:auto; margin-right:auto;">
 
             {% for orderItem in orderItems %}
             <div class="order-detail-container">
-                <img class="order-image" src="{{orderItem.product.imageURL}}" style="max-width: 80px;">
+                <img class="order-image" src="{{orderItem.product.imageURL}}">
 
                 <div class="name-section">
                     <h5>Name</h5>
@@ -44,12 +44,17 @@
                     </h6>
                 </div>
 
+                <div class="order-id-section">
+                    <h5>Order ID</h5>
+                    <h6>#ORDER_{{orderItem.order.id}}</h6>
+                </div>
+
                 <div class="quantity-section">
                     <h5>Quantity</h5>
                     <h6>x {{orderItem.quantity}}</h6>
                 </div>
 
-                <div class="quantity-section">
+                <div class="date-section">
                     <h5>Ordered On</h5>
                     <h6>{{orderItem.date_added}}</h6>
                 </div>
@@ -72,7 +77,7 @@
             </div>
             {% endfor %}
 
-            <div style="float:right;margin-right:10rem;">
+            <div style="float:right;margin-right:6.5rem;">
                 <h5><strong>Total: </strong><span id="totalPrice"></span></h5>
             </div>
         </div>

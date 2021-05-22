@@ -15,6 +15,11 @@ closeBtn.addEventListener("click", function(){
     notiOverlay.classList.remove('transparentBcg');
     notiDOM.classList.remove('showCart');
 })
+
+// notiOverlay.addEventListener("click", function(){
+//     notiOverlay.classList.remove('transparentBcg');
+//     notiDOM.classList.remove('showCart');
+// })
 // End of Notification
 
 
