@@ -4,18 +4,23 @@
 
 {% block content %}
 
-{% if totalPrice > 0 %} <div class="container">
+{% if totalPrice > 0 %}
+<div class="graph-dropdown">
+    <form action="" method="POST" class="branche">
+        {% csrf_token %}
+        <select name="graph_selection" class="form-control" id="select_id">
+            <option selected="selected" disabled>Select GRAPH</option>
+            <option value="totalIncome">Total Income</option>
+            <option value="viewsInProducts">Views In Products</option>
+            <option value="soldProductsQuantity">Sold Product's Quantity</option>
+        </select>
+        <button type="submit" class="btn btn" style="background-color:rgb(67, 228, 67);"><i
+                class="fas fa-check"></i></button>
+    </form>
+</div>
 
+<div class="container" style="margin-top: 5rem;">
     <div id="bar_chart"></div>
-
-    <!-- BUTTONS -->
-    <div class="graph-buttons">
-        <a href="{% url 'app:views-in-product-graph' %}"><button type="button" class="btn btn-outline-dark">GRAPH: Views
-                In Products</button></a>
-        <a href="{% url 'app:quantity-product-graph' %}"><button type="button" class="btn btn-outline-dark">GRAPH:
-                Sold Product's Quantity</button></a>
-    </div>
-    <!-- End of buttons -->
 
     <!-- Portfolio Performance -->
     {% if orderItemQuantity.quantity__sum > 0 %}

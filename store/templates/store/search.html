@@ -1,16 +1,57 @@
 {% extends 'store/main.html' %}
 {% load static %}
 {% block content %}
+
+<style>
+  form label {
+    cursor: pointer;
+  }
+
+  form label:hover {
+    color: rgb(241, 138, 78);
+  }
+</style>
+
 <div class="col-lg-12" style="padding-top:115px;">
   <div class="search_result_container">
 
     <!-- to display 'No results found' if there is no items as searched one -->
     {% if products.count != 0 %}
 
+    <!-- upper part -->
+
     <div class="search_result">
+
+      <!-- Display the name of searched -->
+      {% if brand_select_list == None or brand_select_list|length == 0 and second_price_range == 0 %}
       <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
         found for <span style="color:rgb(0, 140, 255)">"{{request.GET.search}}"</span>
       </h4>
+
+      <!-- Display name of the brand if brand is selected -->
+      {% elif brand_select_list|length > 0 and second_price_range == 0 %}
+
+      {% for product in products|slice:":1" %}
+      <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
+        found for <span style="color:rgb(0, 140, 255)">"{{product.brand}}"</span>
+      </h4>
+      {% endfor %}
+
+      <!-- Display price range if price range is selected -->
+      {% elif brand_select_list|length == 0 and second_price_range > 0 %}
+
+      {% if first_price_range == 0 and second_price_range == 100%}
+      <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
+        found for <span style="color:rgb(0, 140, 255)">"Price: under ${{second_price_range}}"</span>
+      </h4>
+
+      {% else %}
+      <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
+        found for <span style="color:rgb(0, 140, 255)">"Price: ${{first_price_range}} to ${{second_price_range}}"</span>
+      </h4>
+      {% endif %}
+
+      {% endif %}
     </div>
 
     <!-- Dropdown Menu -->
@@ -29,6 +70,7 @@
       </form>
     </div>
 
+    <!-- If no product is displayed then this error appears -->
     {% else %}
     <div class="search_result">
       <h3>No results for <span style="color:rgb(0, 140, 255)">"{{request.GET.search}}"</span></h3>
@@ -38,30 +80,83 @@
   </div>
   <hr style="width:90%; margin-right:auto; margin-left: auto;">
 
-  <!-- display searched products -->
-  <div class="container" style="margin-top:2.3rem;">
-    {% for product in products %}
-    <div class="searched_products" onclick="window.location='../product-detail/{{product.slug}}/';">
-      <div class="product_image_div">
-        <img src="{{product.imageURL}}" alt="" class="search_img"
-          onerror=this.src="{% static 'images/default-image.jpg' %}">
+  <!-- end of upper part -->
+
+
+  <div class="smart-search-products">
+
+    <div class="brand-price-range">
+      <div class="brand-names-radio">
+        <h5.5><b>Featured Brands</b></h5.5>
+
+        <!-- Brand name radio -->
+        <form action="" method="POST">
+          {% csrf_token %}
+          {% for brand in brand_name_of_all_product_list %}
+          <input type="radio" id="{{brand}}" name="brand_select" value="{{brand}}">
+          <label for="{{brand}}"> {{brand}}</label><br>
+          {% endfor %}
+
+          <br><button type="submit" class="btn btn-sm" style=" background-color:rgb(67, 228, 67);"><i
+              class="fas fa-check"></i></button>
+        </form>
+        <!-- End of brand name radio -->
       </div>
-      <div class="product_details">
-        <h4><strong><a href="#">{{product.name}}</a></strong></h4>
 
-        {% if product.discount == 0.0 %}
-        <h3 style="color:rgb(241, 111, 36);">$ {{product.price}}</h3>
+      <div class="price-range">
+        <br>
+        <h5.5><b>Price</b></h5.5>
 
-        {% else %}
-        <h3 style="color:rgb(241, 111, 36);"><strike>$ {{product.price}}</strike>&nbsp&nbsp $
-          {{discountPrice|floatformat:2}}</h3>
-        {% endif %}
+        <!-- price range radio -->
+        <form action="" method="POST">
+          {% csrf_token %}
+          <input type="radio" id="under_100" name="price_range" value="000100">
+          <label for="under_50"> under $100</label><br>
 
-        <h3>Description</h3>
-        <p>{{product.description|truncatewords:30}}</p>
+          <input type="radio" id="100_200" name="price_range" value="100200">
+          <label for="100_200"> $100 to $200</label><br>
+
+          <input type="radio" id="200_300" name="price_range" value="200300">
+          <label for="200_300"> $200 to $300</label><br>
+
+          <input type="radio" id="300_400" name="price_range" value="300400">
+          <label for="300_400"> $300 to $400</label><br>
+
+          <input type="radio" id="400_500" name="price_range" value="400500">
+          <label for="400_500"> $400 to $500</label><br>
+
+          <input type="radio" id="500_above" name="price_range" value="50010000">
+          <label for="500_above"> $500 & above</label><br><br>
+
+          <button type="submit" class="btn btn-sm" style=" background-color:rgb(67, 228, 67);"><i
+              class="fas fa-check"></i></button>
+        </form>
       </div>
     </div>
-    {% endfor %}
+
+    <!-- display searched products -->
+    <div class="container" style="margin-top:2.3rem;">
+      {% for product in products %}
+      <div class="searched_products" onclick="window.location='../product-detail/{{product.slug}}/';">
+        <div class="product_image_div">
+          <img src="{{product.imageURL}}" alt="" class="search_img"
+            onerror=this.src="{% static 'images/default-image.jpg' %}">
+        </div>
+        <div class="product_details">
+          <h4><strong><a href="#">{{product.name}}</a></strong></h4>
+
+          <h3 style="color:rgb(241, 111, 36);">$ {{product.price}}</h3>
+
+          {% if product.discount > 0.0 %}
+          <h5.5 style="color:rgb(66, 66, 66);">Discount: {{product.discount}} %</h5.5>
+          {% endif %}
+
+          <h3>Description</h3>
+          <p>{{product.description|truncatewords:30}}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
 
 </div>

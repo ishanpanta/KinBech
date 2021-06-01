@@ -33,10 +33,6 @@ urlpatterns = [
     path('sellerLogout/', views.sellerLogout, name="seller-logout"),
 
     path('sellerHome/', views.sellerHome, name="seller-home"),
-    path('views-in-product-graph/', views.viewsInProductGraph,
-         name="views-in-product-graph"),
-    path('quantity-product-graph/', views.quantityProductGraph,
-         name="quantity-product-graph"),
 
 
     path('seller-order-detail/<int:pk>/',

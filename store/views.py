@@ -323,6 +323,46 @@ class SellerRequiredMixin(object):
         return super().dispatch(request, *args, **kwargs)
 
 
+# All the graphs
+def graphs(request, x_component, y_component, graph_title, xaxis_title, yaxis_title, graph_type="bar"):
+
+    # x and y component
+    x = x_component
+    y = y_component
+
+    # Bar chart colors
+    colors = ['limegreen', 'pink'] * len(x_component)
+
+    # list which contains the trace and layout
+    trace_layout_list = []
+
+    # Create a trace json to hold graph data
+    trace = {
+        'x': x,
+        'y': y,
+        'type': graph_type,
+        'name': x,
+        'marker': {'color': colors}
+    }
+
+    # appending trace to the list
+    trace_layout_list.append(trace)
+
+    # Configure the chart's layout
+    layout = {'title': {'text': graph_title,
+                        'font': {
+                            'color': '#ffffff'}
+                        },
+              'xaxis': {'title': xaxis_title, 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'false'},
+              'yaxis': {'title': yaxis_title, 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'true'},
+              'plot_bgcolor': '#38393d', 'paper_bgcolor': '#38393d', 'bordercolor': '#ffffff'}
+
+    # appending layout to the list
+    trace_layout_list.append(layout)
+
+    return trace_layout_list
+
+
 def sellerHome(request):
     a = SellerRequiredMixin()
     seller = request.user.seller
@@ -346,175 +386,123 @@ def sellerHome(request):
 
     # END OF PORTFOLIO PERFORMANCE
 
-    # BAR-CHART (Total Income)
+    # FORM
+    graph_selection = ""
+    if request.method == 'POST':
+        graph_selection = request.POST.get('graph_selection')
 
-    # list of name, total_quantity and price of ordered products
-    orderItem_name = []
-    orderItem_total_quantity = []
-    orderItem_price = []
+        print("Graph selection: ", graph_selection)
 
-    products = Product.objects.filter(seller=seller)
+    # END OF FORM
 
-    # adding the total quantity of product sold till now to the above list
-    for prod in products:
-        orderItems = OrderItem.objects.filter(
-            product__seller=seller, product__name=prod.name).aggregate(Sum('quantity'))
+    if graph_selection == "" or graph_selection == "totalIncome":
 
-        product = Product.objects.get(name=prod)
+        # # # BAR-CHART (Total Income) # # #
 
-        # access the aggregate sum of total quantity of the products
-        total_product_quantity = orderItems['quantity__sum']
+        # list of name, total_quantity and price of ordered products
+        orderItem_name = []
+        orderItem_total_quantity = []
+        orderItem_price = []
 
-        # if the product has not been sold till now then it wouldnot be added in the list and hence in the graph
-        if total_product_quantity == None:
-            pass
-        else:
-            orderItem_name.append(prod.name)
-            orderItem_total_quantity.append(total_product_quantity)
-            orderItem_price.append(product.price)
+        products = Product.objects.filter(seller=seller)
 
-    # multiplying two lists (quantity and price) and putting it to the orderItem_total_price_decimal list
-    orderItem_total_price_decimal = [quantity * price for quantity,
-                                     price in zip(orderItem_total_quantity, orderItem_price)]
+        # adding the total quantity of product sold till now to the above list
+        for prod in products:
+            orderItems = OrderItem.objects.filter(
+                product__seller=seller, product__name=prod.name).aggregate(Sum('quantity'))
 
-    # converting decimal price into float price and further converting to list
-    orderItem_total_price = list(map(float, orderItem_total_price_decimal))
+            product = Product.objects.get(name=prod)
 
-    # x and y component
-    x = orderItem_name
-    y = orderItem_total_price
+            # access the aggregate sum of total quantity of the products
+            total_product_quantity = orderItems['quantity__sum']
 
-    # Bar chart colors
-    colors = ['limegreen', 'pink'] * len(orderItem_name)
+            # if the product has not been sold till now then it wouldnot be added in the list and hence in the graph
+            if total_product_quantity == None:
+                pass
+            else:
+                orderItem_name.append(prod.name)
+                orderItem_total_quantity.append(total_product_quantity)
+                orderItem_price.append(product.price)
 
-    # Create a trace json to hold graph data
-    trace = {
-        'x': x,
-        'y': y,
-        'type': 'bar',
-        'name': x,
-        'marker': {'color': colors}
-    }
+        # multiplying two lists (quantity and price) and putting it to the orderItem_total_price_decimal list
+        orderItem_total_price_decimal = [quantity * price for quantity,
+                                         price in zip(orderItem_total_quantity, orderItem_price)]
 
-    # Configure the chart's layout
-    layout = {'title': {'text': 'Total Income',
-                        'font': {
-                                'color': '#ffffff'}
-                        },
-              'xaxis': {'title': "Product's Name", 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'false'},
-              'yaxis': {'title': 'Total Price ($)', 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'true'},
-              'plot_bgcolor': '#38393d', 'paper_bgcolor': '#38393d', 'bordercolor': '#ffffff'}
+        # converting decimal price into float price and further converting to list
+        orderItem_total_price = list(map(float, orderItem_total_price_decimal))
+
+        # Calling the graphs function
+        # returns the list which contains the trace (1st element) and layout (2nd element)
+        trace_layout_list = graphs(request, orderItem_name, orderItem_total_price, graph_title='Total Income',
+                                   xaxis_title="Product's Name", yaxis_title='Total Price ($)')
+
+        # title of the graph
+        title = "Total Income"
+
+        # # # END OF BAR-CHART (Total Income) # # #
+
+    elif graph_selection == "viewsInProducts":
+
+        # No of views of a product
+
+        # # # BAR-CHART (No of Views) # # #
+
+        # creating a list of all product names with its view_count
+        all_product_names = []
+        all_product_counts = []
+
+        product_names = Product.objects.filter(seller=seller)
+
+        for product in product_names:
+            all_product_names.append(product.name)
+            all_product_counts.append(product.view_count)
+
+        trace_layout_list = graphs(request, all_product_names, all_product_counts, graph_title='Number of views in a Product',
+                                   xaxis_title="Product's Name", yaxis_title='View Count')
+
+        title = "Number of views in a Product"
+
+        # # # END OF BAR-CHART (No of Views) # # #
+
+    elif graph_selection == "soldProductsQuantity":
+
+        # # # Sold Product's Quantity # # #
+
+        # list of name, total_quantity and price of ordered products
+        orderItem_name = []
+        orderItem_total_quantity = []
+
+        products = Product.objects.filter(seller=seller)
+
+        # adding the total quantity of product sold till now to the above list
+        for prod in products:
+            orderItems = OrderItem.objects.filter(
+                product__seller=seller, product__name=prod.name).aggregate(Sum('quantity'))
+
+            # access the aggregate sum of total quantity of the products
+            total_product_quantity = orderItems['quantity__sum']
+
+            # if the product has not been sold till now then it wouldnot be added in the list and hence in the graph
+            if total_product_quantity == None:
+                pass
+            else:
+                orderItem_name.append(prod.name)
+                orderItem_total_quantity.append(total_product_quantity)
+
+        # List process THE END
+
+        trace_layout_list = graphs(request, orderItem_name, orderItem_total_quantity, graph_title='Total Quantity Sold',
+                                   xaxis_title="Product's Name", yaxis_title='Quantity', graph_type="scatter")
+
+    title = "Total Quantity Sold"
+
+    # # # END OF Sold Product's Quantity # # #
 
     context = {"orders": orders, "seller": seller,
-               'orderItemQuantity': orderItemQuantity, 'totalPrice': totalPrice, "trace": trace,
-               "layout": layout, "title": "Total Income"}
+               'orderItemQuantity': orderItemQuantity, 'totalPrice': totalPrice, "trace": trace_layout_list[0],
+               "layout": trace_layout_list[1], "title": title}
 
     return render(request, "store/seller/sellerHome.html", context)
-
-
-# No of views of a product
-def viewsInProductGraph(request):
-    seller = request.user.seller
-
-    # BAR-CHART (No of Views)
-
-    # creating a list of all product names with its view_count
-    all_product_names = []
-    all_product_counts = []
-
-    product_names = Product.objects.filter(seller=seller)
-
-    for product in product_names:
-        all_product_names.append(product.name)
-        all_product_counts.append(product.view_count)
-
-    # x and y component
-    x = all_product_names
-    y = all_product_counts
-
-    # Bar chart colors
-    colors = ['limegreen', 'pink'] * len(all_product_names)
-
-    # Create a trace json to hold graph data
-    trace = {
-        'x': x,
-        'y': y,
-        'type': 'bar',
-        'name': x,
-        'marker': {'color': colors}
-    }
-
-    # Configure the chart's layout
-    layout = {'title': {'text': 'Number of views in a Product',
-                        'font': {
-                            'color': '#ffffff'}
-                        },
-              'xaxis': {'title': "Product's Name", 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'false'},
-              'yaxis': {'title': 'View Count', 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'true'},
-              'plot_bgcolor': '#38393d', 'paper_bgcolor': '#38393d', 'bordercolor': '#ffffff'}
-
-    # END OF BAR-CHART (No of Views)
-
-    context = {"trace": trace, "layout": layout,
-               "title": "Number of views in a Product"}
-
-    return render(request, "store/seller/viewsInProductGraph.html", context=context)
-
-
-# Total quantity sold for an product
-def quantityProductGraph(request):
-    seller = request.user.seller
-
-    # list of name, total_quantity and price of ordered products
-    orderItem_name = []
-    orderItem_total_quantity = []
-
-    products = Product.objects.filter(seller=seller)
-
-    # adding the total quantity of product sold till now to the above list
-    for prod in products:
-        orderItems = OrderItem.objects.filter(
-            product__seller=seller, product__name=prod.name).aggregate(Sum('quantity'))
-
-        # access the aggregate sum of total quantity of the products
-        total_product_quantity = orderItems['quantity__sum']
-
-        # if the product has not been sold till now then it wouldnot be added in the list and hence in the graph
-        if total_product_quantity == None:
-            pass
-        else:
-            orderItem_name.append(prod.name)
-            orderItem_total_quantity.append(total_product_quantity)
-
-    # List process THE END
-
-    # Main Scatter Plot section
-
-    # color
-    colors = ['limegreen', ] * len(orderItem_name)
-
-    # Create a trace json to hold graph data
-    trace = {
-        'x': orderItem_name,
-        'y': orderItem_total_quantity,
-        'type': 'scatter',
-        'marker': {'color': colors},
-    }
-
-    # Configure the chart's layout
-    layout = {'title': {'text': 'Total Quantity Sold',
-                        'font': {
-                            'color': '#ffffff'}
-                        },
-              'xaxis': {'title': "Product's Name", 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'false'},
-              'yaxis': {'title': 'Quantity', 'color': '#DCDCDC', 'mirror': 'true', 'showline': 'true'},
-              'plot_bgcolor': '#38393d', 'paper_bgcolor': '#38393d', 'bordercolor': '#ffffff'}
-
-    # Pass trace and layout in the context
-    context = {"trace": trace, "layout": layout,
-               "title": "Total Quantity Sold"}
-
-    return render(request, "store/seller/quantityProductGraph.html", context=context)
 
 
 def sellerProfile(request):
@@ -829,18 +817,58 @@ def searchItems(request):
         products = Product.objects.filter(Q(name__icontains=searchProduct) | Q(
             description__icontains=searchProduct) | Q(category__title__icontains=searchProduct), disable=False)
 
-    # DISCOUNT
-    discountPrice = 0.0
-    for product in products:
-        if product.discount > 0.0:
-            discountPrice = decimal.Decimal(product.price) - \
-                ((decimal.Decimal(product.discount)/decimal.Decimal(100))
-                 * decimal.Decimal(product.price))
-        else:
-            discountPrice = 0.0
+    # yo discount ko sabai vanda tala rako vane problem solve hunxa jasto lago
 
-    context = {"products": products, "cartItems": cartItems,
-               "discountPrice": discountPrice, }
+    # NOTE: PRICE RANGE
+    price_range_list = 0
+
+    split_price_range_list = ['0', '0']
+    if request.method == "POST":
+        price_range_list = request.POST.getlist('price_range')
+
+        for price in price_range_list:
+            # replacing first-'0' with the first three number of price range
+            split_price_range_list[0] = price[0:3]
+
+            # replacing second-'0' with the remaining numbers
+            split_price_range_list[1] = price[3:len(price)]
+
+    # display selected price range products only if ...
+    if price_range_list != 0 and split_price_range_list[0] != '0' and split_price_range_list[1] != '0':
+        try:
+            products = Product.objects.filter(price__range=(
+                int(split_price_range_list[0]), int(split_price_range_list[1])))    # price_range = (min,max)
+        except:
+            pass
+    # END OF PRICE RANGE
+
+    # NOTE: BRAND WISE SEARCH
+
+    # list containing all the brand names
+    brand_name_of_all_product_list = []
+
+    # appending brand names of all products
+    # DIsplaying the brand names
+    for product in Product.objects.all():
+        brand_name_of_all_product_list.append(product.brand)
+
+    # geting the list of the choosed brand name
+    brand_select_list = None
+    if request.method == "POST":
+        brand_select_list = request.POST.getlist('brand_select')
+
+    # run only if any brand name is chooosed
+    # Displaying the products acording to the choosed brand
+    if brand_select_list != None:
+        try:
+            products = Product.objects.filter(brand=brand_select_list[0])
+        except:
+            pass
+
+    # END OF BRAND WISE SEARCH
+
+    context = {"products": products, "cartItems": cartItems, "brand_name_of_all_product_list": list(
+        set(brand_name_of_all_product_list)), "brand_select_list": brand_select_list, "first_price_range": int(split_price_range_list[0]), "second_price_range": int(split_price_range_list[1])}
     return render(request, "store/search.html", context)
 
 
@@ -854,18 +882,37 @@ def createUpdateOrder(request, productId, action, quantity=0):
     # for cookies OrderItems
     if quantity != 0:
 
-        # yo garna milxa hola
-        # if OrderItem.objects.filter(product__id=productId, order__id=order.id).exists():
-        #     pass
+        # if orderItem from the cookie already exits iin the  customer cart then new orderItem willnot
+        # be created instead the quantity will be added to the pre-exiting orderItem present in the cart.
+        try:
 
-        if product.quantity >= quantity:
-            orderItem, created = OrderItem.objects.get_or_create(
-                order=order, product=product, quantity=quantity)
+            # get orderItem with the which has the present orderId and productID
+            orderItem = OrderItem.objects.get(
+                order__id=order.id, product__id=product.id)
 
-        # if the orderItem send from the guest user, qunatity is greater then actual product quantity
-        else:
-            orderItem, created = OrderItem.objects.get_or_create(
-                order=order, product=product, quantity=product.quantity)
+            # adding quantity to the pre-exiting orderItem instead of creating new orderItem in cart
+            if product.quantity >= orderItem.quantity:
+                orderItem.quantity += quantity
+
+                # total gare paxi feri check garne
+                # now check if orderItem quantity is greater than product actual quantity
+                if orderItem.quantity > product.quantity:
+                    orderItem.quantity = product.quantity
+            else:
+                orderItem.quantity = product.quantity
+
+            orderItem.save()
+
+        # if cookie orderItem doesnot exists in the customer cart
+        except:
+            if product.quantity >= quantity:
+                orderItem, created = OrderItem.objects.get_or_create(
+                    order=order, product=product, quantity=quantity)
+
+            # if the orderItem qunatity send from the guest user is greater then actual product quantity
+            else:
+                orderItem, created = OrderItem.objects.get_or_create(
+                    order=order, product=product, quantity=product.quantity)
 
     # for those items added from the user in site
     else:

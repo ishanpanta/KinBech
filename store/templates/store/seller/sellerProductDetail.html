@@ -66,6 +66,10 @@
 
             <h3 class="product-name">{{product.name}}</h3>
 
+            {% if product.brand != None %}
+            <h5 style="color:rgb(104, 102, 102)">Brand: {{product.brand}}</h5>
+            {% endif %}
+
             <p style="color:rgb(40, 99, 226);">User ratings</p>
 
             <img src="{% static 'images/rating.png' %}" style="width: 120px;" alt="">
