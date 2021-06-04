@@ -238,7 +238,7 @@ def customerProfile(request):
     customer = request.user.customer
     # orders expect the order_status="Order Canceled"
     # orders=Order.objects.filter(customer=customer, complete=True,).exclude(order_status="Order Canceled").order_by("-id")
-    orderItems = OrderItem.objects.filter(order__customer=customer).exclude(
+    orderItems = OrderItem.objects.filter(order__customer=customer, order__complete=True).exclude(
         orderItem_order_status="Order Canceled").order_by("-id")
     context = {"customer": customer,
                "orderItems": orderItems, "cartItems": cartItems, }
@@ -569,7 +569,10 @@ def sellerOrderList(request):
     seller = request.user.seller
     allorders = Order.objects.filter(
         orderitem__product__seller=seller, complete=True).distinct().order_by("-id")
-    context = {"allorders": allorders}
+
+    orderItem = OrderItem.objects.filter(
+        product__seller=seller, order__complete=True).order_by("-id")
+    context = {"allorders": allorders, "orderItem": orderItem}
     return render(request, "store/seller/sellerOrderList.html", context)
 
 

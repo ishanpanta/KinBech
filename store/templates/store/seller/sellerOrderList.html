@@ -14,7 +14,10 @@
     <div class="recom" onclick="window.location='../seller-order-detail/{{order.id}}/'">
         <div class="">
             {% for oi in order.orderitem_set.all|slice:":1" %}
+            <!-- <p>{{oi.product.name}} ({{oi.id}})</p> -->
+            <!-- <p>{{oi.noti_status}}</p> -->
             {% if oi.product.seller == request.user.seller %}
+            <!-- <p>{{oi.product.imageURL}}</p> -->
             <img class="" id="recom-image" src="{{oi.product.imageURL}}"
                 onerror=this.src="{% static 'images/default-image.jpg' %}" alt="">
             {% endif %}
@@ -35,7 +38,12 @@
         </div>
     </div>
     {% endfor %}
-
 </div>
+<!-- <div style="margin-left:2rem;">
+    {% for oi in orderItem %}
+    <p>{{oi.product.name}}</p>
+    <p>{{oi.order.id}}</p>
+    {% endfor %}
+</div> -->
 
 {% endblock content %}

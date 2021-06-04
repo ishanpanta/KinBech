@@ -18,8 +18,17 @@
                 {% for orderItem in orderItems %}
                 <!-- looped for only one time -->
                 {% if forloop.first %}
+                {% if orderItem.orderItem_order_status != "Order Canceled" %}
                 <p><strong>Order Status: </strong>{{orderItem.orderItem_order_status}}</p>
                 <p><strong>Order On: </strong>{{orderItem.date_added}}({{orderItem.date_added|timesince}} ago)</p>
+                {% else %}
+
+                {% if forloop.last %}
+                <p><strong>Order Status: </strong>{{orderItem.orderItem_order_status}}</p>
+                <p><strong>Order On: </strong>{{orderItem.date_added}}({{orderItem.date_added|timesince}} ago)</p>
+                {% endif %}
+
+                {% endif %}
                 {% endif %}
                 {% endfor %}
 
