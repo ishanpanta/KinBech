@@ -166,10 +166,10 @@
 
 
                     <!-- Display Replies -->
-                    <div class="replies my-2 ">
+                    <div class="replies my-1 ">
                         {% for reply in replies %}
                         {% if reply.parent.sno == comment.sno %}
-                        <div class="row my-2" style="padding-left: 0px; padding-top: 5px; padding-bottom: -15px;">
+                        <div class="row my-1" style="padding-left: 0px; padding-top: 5px; padding-bottom: -15px;">
                             <div class="col-md-1 ">
                                 <img class="rounded mx-auto d-block w-75 my-2 border border-dark p-2"
                                     src="{% static 'images/user-image.jpg' %}" alt="user">

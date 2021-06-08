@@ -108,7 +108,7 @@
 
         <!-- Seller Login -->
         <li class="nav__list-item">
-          <a class="nav__link nav__link--btn nav__link--btn--highlight" href="{% url 'app:seller-login' %}">Sell</a>
+          <a class="nav__link nav__link--btn nav__link--btn--highlight" href="{% url 'auth:seller-login' %}">Sell</a>
         </li>
 
         <!-- cart icon -->
@@ -121,17 +121,17 @@
         <!-- logout -->
         <li class="nav__list-item">
           <a class="nav__link nav__link--btn nav__link--btn--highlight"
-            href="{% url 'app:customer-logout' %}">Logout</a>
+            href="{% url 'auth:customer-logout' %}">Logout</a>
         </li>
         {% else %}
 
         <!-- SignUp and Login -->
         <li class="nav__list-item">
           <a class="nav__link nav__link--btn nav__link--btn--highlight"
-            href="{% url 'app:customer-registration' %}">SignUp</a>
+            href="{% url 'auth:customer-registration' %}">SignUp</a>
         </li>
         <li class="nav__list-item">
-          <a class="nav__link nav__link--btn" href="{% url 'app:customer-login' %}">Login</a>
+          <a class="nav__link nav__link--btn" href="{% url 'auth:customer-login' %}">Login</a>
         </li>
         {% endif %}
 

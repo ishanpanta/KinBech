@@ -35,7 +35,7 @@
         </label>
 
         <!-- <div class="left_area"> -->
-        <a href="{% url 'app:seller-home' %}" class="site-logo" aria-label="homepage"
+        <a href="{% url 'seller:seller-home' %}" class="site-logo" aria-label="homepage"
             style="font-size:22px;">KinBech</a>
         <!-- </div> -->
 
@@ -45,14 +45,14 @@
 
                 <!-- My Profile -->
                 <li class="nav__list-item">
-                    <a class="nav__link nav__link--btn seller-profile-btn" href="{% url 'app:seller-profile' %}">My
+                    <a class="nav__link nav__link--btn seller-profile-btn" href="{% url 'seller:seller-profile' %}">My
                         Profile</a>
                 </li>
 
                 <!-- Logout -->
                 <li class="nav__list-item">
                     <a class="nav__link nav__link--btn nav__link--btn--highlight"
-                        href="{% url 'app:seller-logout' %}">Logout</a>
+                        href="{% url 'auth:seller-logout' %}">Logout</a>
                 </li>
 
                 <!-- NOTIFICATION ICON -->
@@ -106,12 +106,12 @@
             <h5 onClick="window.location.href='../seller-profile/'">{{seller.user.username}}</h5>
         </center>
 
-        <a href="{% url 'app:seller-home' %}"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
-        <a href="{% url 'app:seller-order-list' %}"><i class="fas fa-table"></i><span>All Orders</span></a>
-        <a href="{% url 'app:seller-product-list' %}"><i class="fas fa-shopping-basket"></i><span>All
+        <a href="{% url 'seller:seller-home' %}"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
+        <a href="{% url 'seller:seller-order-list' %}"><i class="fas fa-table"></i><span>All Orders</span></a>
+        <a href="{% url 'seller:seller-product-list' %}"><i class="fas fa-shopping-basket"></i><span>All
                 Products</span></a>
-        <a href="{% url 'app:seller-product-add' %}"><i class="fas fa-plus-circle"></i><span>Add Product</span></a>
-        <a href="{% url 'app:seller-logout' %}"><i class="fas fa-th"></i><span>Visit site</span></a>
+        <a href="{% url 'seller:seller-product-add' %}"><i class="fas fa-plus-circle"></i><span>Add Product</span></a>
+        <a href="{% url 'auth:seller-logout' %}"><i class="fas fa-th"></i><span>Visit site</span></a>
 
     </div>
     <!-- end of sidebar -->

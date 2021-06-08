@@ -12,6 +12,7 @@
 
 	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 
+
 	<style>
 		body,
 		html {
@@ -22,6 +23,7 @@
 		}
 	</style>
 
+
 </head>
 
 <body>
@@ -29,78 +31,45 @@
 		<div class="d-flex justify-content-center h-100">
 			<div class="user_card">
 				<div class="d-flex justify-content-center">
-					<h3 id="form-title">REGISTER CUSTOMER</h3>
+
+
+					<h3 id="form-title">Get started selling on KinBech</h3>
 				</div>
 				<div class="d-flex justify-content-center form_container">
-
 					<form method="POST" action="">
 						{% csrf_token %}
 						<div class="input-group mb-3">
 							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-user-tie"></i></span>
-							</div>
-							{{form.name}}
-						</div>
-						<div class="input-group mb-2">
-							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
 							</div>
-							{{form.username}}
-						</div>
-						<div class="input-group mb-2">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-envelope-square"></i></span>
-							</div>
-							{{form.email}}
+							<input type="text" name="username" placeholder="Username..." class="form-control">
 						</div>
 						<div class="input-group mb-2">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-key"></i></span>
 							</div>
-							{{form.password1}}
-						</div>
-						<div class="input-group mb-2">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
-							</div>
-							{{form.password2}}
-						</div>
-						<div class="input-group mb-2">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-phone"></i></span>
-							</div>
-							{{form.phone}}
+							<input type="password" name="password" placeholder="Password..." class="form-control">
 						</div>
 
 						<div class="d-flex justify-content-center mt-3 login_container">
-							<input class="btn login_btn" type="submit" value="Register">
+							<input class="btn login_btn" type="submit" value="Login">
 						</div>
 					</form>
 				</div>
-				{{form.errors}}
+
+				{% for message in messages %}
+				<p id="messages">{{message}}</p>
+				{% endfor %}
+
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
-						Already have an account? <a href="{% url 'app:customer-login' %}" class="ml-2">Login</a>
+						Don't have an account? <a href="{% url 'auth:seller-register' %}" class="ml-2">Sign Up</a>
 					</div>
+
 				</div>
 			</div>
 		</div>
 	</div>
-	<script>
-		//Query All input fields
-		var form_fields = document.getElementsByTagName('input')
-		form_fields[1].placeholder = 'Full Name..';
-		form_fields[2].placeholder = 'Username..';
-		form_fields[3].placeholder = 'Email...';
-		form_fields[4].placeholder = 'Password...';
-		form_fields[5].placeholder = 'Conform Password...';
-		form_fields[6].placeholder = 'Contact Number...';
-
-
-		for (var field in form_fields) {
-			form_fields[field].className += ' form-control'
-		}
-	</script>
 </body>
 
 </html>

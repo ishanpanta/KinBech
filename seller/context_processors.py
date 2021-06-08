@@ -1,5 +1,5 @@
 from store.views import cancelOrder
-from .models import *
+from store.models import *
 
 
 def notification(request):

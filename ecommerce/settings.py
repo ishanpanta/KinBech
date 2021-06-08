@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'store',
+    'authentication',
+    'seller',
+
     'django.contrib.humanize',
     'django_plotly_dash.apps.DjangoPlotlyDashConfig',
     'channels',
@@ -68,7 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'store.context_processors.notification',
+                'seller.context_processors.notification',
             ],
         },
     },

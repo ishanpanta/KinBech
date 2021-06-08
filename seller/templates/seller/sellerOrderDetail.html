@@ -1,4 +1,4 @@
-{% extends 'store/seller/sellerMain.html' %}
+{% extends 'seller/sellerMain.html' %}
 {% load humanize %}
 {% load static %}
 
@@ -43,7 +43,7 @@
 
                 <!-- Change Order Status -->
                 {% for o in order %}
-                <form action="{% url 'app:seller-order-status-change' o.id %}" method="post" class="form_class">
+                <form action="{% url 'seller:seller-order-status-change' o.id %}" method="post" class="form_class">
                     {% csrf_token %}
                     <select name="status" class="form-control" style="width:auto;">
                         {% for i,j in allstatus %}

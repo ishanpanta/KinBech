@@ -1,4 +1,4 @@
-{% extends "store/seller/sellerMain.html" %}
+{% extends "seller/sellerMain.html" %}
 {% load humanize %}
 {% load static %}
 
@@ -47,19 +47,19 @@
             <div class="update-free-shipping">
 
                 {% if product.disable == False %}
-                <a href="{% url 'app:product-disable' product.slug %}"><button class="btn btn-dark"><i
+                <a href="{% url 'seller:product-disable' product.slug %}"><button class="btn btn-dark"><i
                             class="fas fa-ban"></i> Disable</button></a>
                 {% else %}
-                <a href="{% url 'app:product-enable' product.slug %}"><button class="btn btn-dark"><i
+                <a href="{% url 'seller:product-enable' product.slug %}"><button class="btn btn-dark"><i
                             class="fa fa-key"></i> Enable</button></a>
                 {% endif %}
 
                 <!-- UPDATE -->
-                <a href="{% url 'app:seller-product-update' slug=product.slug %}"><button class="btn btn-dark"><i
+                <a href="{% url 'seller:seller-product-update' slug=product.slug %}"><button class="btn btn-dark"><i
                             class="fas fa-edit"></i> Update</button></a>
 
                 <!-- DELETE -->
-                <a href="{% url 'app:product-delete' product.id %}" data-toggle="tooltip" data-placement="top"
+                <a href="{% url 'seller:product-delete' product.id %}" data-toggle="tooltip" data-placement="top"
                     title="Delete Product"><img class="cancel-button"
                         src="{% static 'images/trash-icon-2.png' %}"></img></a>
             </div>
@@ -175,10 +175,10 @@
 
 
                     <!-- Display Replies -->
-                    <div class="replies my-2 ">
+                    <div class="replies my-1 ">
                         {% for reply in replies %}
                         {% if reply.parent.sno == comment.sno %}
-                        <div class="row my-2" style="padding-left: 0px; padding-top: 5px; padding-bottom: -15px;">
+                        <div class="row my-1" style="padding-left: 0px; padding-top: 5px; padding-bottom: -15px;">
                             <div class="col-md-1 ">
                                 <img class="rounded mx-auto d-block w-75 my-2 border border-dark p-2"
                                     src="{% static 'images/user-image.jpg' %}" alt="user">
