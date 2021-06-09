@@ -5,6 +5,7 @@
 
 {% block content %}
 
+
 <!-- Bootstrap slider -->
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
     <ol class="carousel-indicators">
@@ -53,6 +54,7 @@
 </div>
 <!-- End slider -->
 
+<!-- <button onclick="changeDarkMode()">Dark mode</button> -->
 
 <!-- CATEGORIES -->
 <div class="title">
@@ -166,9 +168,9 @@
 
 <!-- FOOTER -->
 <footer class="footer">
-    <div class="button">
-        <button class="back-to-top" onclick="window.location.href=''">Back to top</button>
-    </div>
+    <!-- <div class="button">
+        <button class="back-to-top" onclick="window.location.href='#'">Back to top</button>
+    </div> -->
     <div class="containerss">
         <div class="rowss">
             <div class="footer-col">
@@ -205,14 +207,18 @@
                     <li><a href="#">Twitter</a></li>
                 </ul>
             </div>
+            <a href="#" id="toTopBtn" class="cd-top text-replace js-cd-top cd-top--is-visible cd-top--fade-out"
+                data-abc="true"></a>
         </div>
+
+
     </div>
 </footer>
 <!-- END OF FOOTER -->
 
 <script>
     {% if user.is_authenticated %}
-    // DELETE CART cookie after checkout
+    // DELETE CART cookie after login user enters the store page
     // we are not deleting the cart but we are overwriting cart with empty cart object
     cart = {}
     document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"

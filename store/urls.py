@@ -20,6 +20,7 @@ urlpatterns = [
     path('customer-order-detail/<int:pk>',
          views.customerOrderDetail, name="customer-order-detail"),
     path('cancel-order/<int:pk>', views.cancelOrder, name="cancel-order"),
+
     path('postComment/', views.postComment, name="postcomment"),
 
 

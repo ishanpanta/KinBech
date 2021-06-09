@@ -66,6 +66,7 @@ def graphs(request, x_component, y_component, graph_title, xaxis_title, yaxis_ti
 def sellerHome(request):
     a = SellerRequiredMixin()
     seller = request.user.seller
+    print(seller)
 
     # orderItems = OrderItem.objects.filter(product__seller=seller, order__order_status="Order Received").order_by("-id")
     orders = Order.objects.filter(orderitem__product__seller=seller, complete=True,

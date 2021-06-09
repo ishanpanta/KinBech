@@ -72,3 +72,28 @@ function updateUserOrder(productId, action) {
         location.reload()
     })
 }
+
+
+// SCROLL: Button To Top
+$(document).ready(function() {
+    $(window).scroll(function() {
+    if ($(this).scrollTop() > 20) {
+    $('#toTopBtn').fadeIn();
+    } else {
+    $('#toTopBtn').fadeOut();
+    }
+    });
+    
+    $('#toTopBtn').click(function() {
+    $("html, body").animate({
+    scrollTop: 0
+    }, 1000);
+    return false;
+    });
+    });
+
+// Dark mode
+function changeDarkMode() {
+    var element = document.body;
+    element.classList.toggle("dark-mode");
+}
