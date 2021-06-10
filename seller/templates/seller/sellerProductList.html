@@ -17,7 +17,14 @@
         </div>
         <div class="text-part">
             <h5>{{product.name|truncatechars:30}}</h5>
+
+            {% if product.discount > 0 %}
+            <h6 style="color:#f09d51;">$ {{product.discount_price|intcomma|floatformat:2}}</h6>
+            {% else %}
+
             <h6 style="color:#f09d51;">$ {{product.price|intcomma}}</h6>
+            {% endif %}
+
             <h6><b style="color:rgb(90, 89, 89);">Count:</b> {{product.view_count}}</h6>
         </div>
     </div>

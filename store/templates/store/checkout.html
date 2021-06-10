@@ -1,8 +1,10 @@
 <!-- Checkout page -->
 {% extends 'store/main.html' %}
+{% load humanize %}
 {% load static %}
+
 {% block content %}
-<div class="row">
+<div class="row" style="width:95%;">
 	<div class="col-lg-6">
 		<!-- shipping information -->
 		<div class="box-element" id="form-wrapper">
@@ -42,7 +44,7 @@
 	</div>
 
 	<!-- order summary -->
-	<div class="col-lg-6">
+	<div class="col-lg-6" style="padding-left: 2rem;">
 		<div class="box-element">
 			<a class="btn btn-outline-dark" href="{% url 'app:cart' %}">&#x2190; Back to Cart</a>
 			<hr>
@@ -50,14 +52,23 @@
 			<hr>
 			{% for item in items %}
 			<div class="cart-row">
-				<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"
-						onerror=this.src="{% static 'images/default-image.jpg' %}"></div>
-				<div style="flex:2">
-					<p class="product-name">{{item.product.name}}</p>
+				<div style="flex:1.8"><img class="row-image" src="{{item.product.imageURL}}"
+						onerror=this.src="{% static 'images/default-image.jpg' %}">
 				</div>
+
+				<div style="flex:1.4">
+					<p class="product-name">{{item.product.name|truncatewords:20}}</p>
+				</div>
+
 				<div style="flex:1">
-					<p>${{item.product.price}}</p>
+					{% if item.product.discount > 0 %}
+					<h6>$ {{item.product.discount_price|intcomma|floatformat:2}}</h6>
+					{% else %}
+
+					<h6>$ {{item.product.price|intcomma}}</h6>
+					{% endif %}
 				</div>
+
 				<div style="flex:1">
 					<p class="product-quantity">x{{item.quantity}}</p>
 				</div>

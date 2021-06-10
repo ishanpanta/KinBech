@@ -1,5 +1,7 @@
 {% extends 'store/main.html' %}
+{% load humanize %}
 {% load static %}
+
 {% block content %}
 
 <style>
@@ -145,10 +147,15 @@
         <div class="product_details">
           <h4><strong><a href="#">{{product.name}}</a></strong></h4>
 
-          <h3 style="color:rgb(241, 111, 36);">$ {{product.price}}</h3>
+          <!-- Product Price -->
+          <!-- If discount is provided -->
+          {% if product.discount > 0 %}
+          <h3 style="color:rgb(241, 111, 36);"><strike>$ {{product.price|intcomma}}</strike>&nbsp&nbsp $
+            {{product.discount_price|intcomma|floatformat:2}}</h3>
+          {% else %}
 
-          {% if product.discount > 0.0 %}
-          <h5.5 style="color:rgb(66, 66, 66);">Discount: {{product.discount}} %</h5.5>
+          <!-- IF discount isnot provided -->
+          <h3 style="color:rgb(241, 111, 36);">$ {{product.price|intcomma}}</h3>
           {% endif %}
 
           <h3>Description</h3>

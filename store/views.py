@@ -230,7 +230,7 @@ def postComment(request):
             comment.save()
 
     if Seller.objects.filter(user__username=user.username):
-        return redirect(f"seller/seller-product-detail/{product.slug}/")
+        return redirect(f"../seller/seller-product-detail/{product.slug}/")
     elif Customer.objects.filter(user__username=user.username):
         return redirect(f"/product-detail/{product.slug}/")
 
@@ -283,13 +283,6 @@ def productDetail(request, slug):
     product.view_count += 1
     product.save()
 
-    # DISCOUNT
-    discountPrice = 0
-    if product.discount > 0.0:
-        discountPrice = decimal.Decimal(product.price) - \
-            (((decimal.Decimal(product.discount))/decimal.Decimal(100))
-             * decimal.Decimal(product.price))
-
     # RECOMENDATION
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -306,8 +299,8 @@ def productDetail(request, slug):
     replies = ProductComment.objects.filter(
         product=product).exclude(parent=None)
 
-    context = {"product": product,
-               "cartItems": cartItems, "discountPrice": discountPrice, "comments": comments, "replies": replies, }
+    context = {"product": product, "cartItems": cartItems,
+               "comments": comments, "replies": replies, }
     return render(request, "store/productDetail.html", context)
 
 

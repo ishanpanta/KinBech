@@ -1,5 +1,7 @@
 {% extends 'store/main.html' %}
+{% load humanize %}
 {% load static %}
+
 {% block content %}
 <!-- products -->
 <section id="products" style="padding-top:125px;">
@@ -37,7 +39,15 @@
                 {% endif %}
             </div>
             <h3><strong><a href="{% url 'app:productDetail' product.slug %}">{{ product.name }}</a></strong></h3>
-            <h4>${{ product.price}}</h4>
+            <!-- <h4>${{ product.price}}</h4> -->
+
+            <!-- Product Price -->
+            {% if product.discount > 0 %}
+            <h4>$ {{product.discount_price|intcomma|floatformat:2}}</h4>
+            {% else %}
+
+            <h4>$ {{product.price|intcomma}}</h4>
+            {% endif %}
         </div>
         <!-- end single products -->
         {% endfor %}

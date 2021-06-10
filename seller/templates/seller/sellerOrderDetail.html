@@ -79,7 +79,12 @@
 
                 <div class="rate-section">
                     <h5>Rate</h5>
+                    {% if orderItem.product.discount > 0 %}
+                    <h6>$ {{orderItem.product.discount_price|floatformat:2|intcomma}}</h6>
+                    {% else %}
+
                     <h6>$ {{orderItem.product.price|intcomma}}</h6>
+                    {% endif %}
                 </div>
 
                 <div class="quantity-section">

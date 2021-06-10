@@ -96,7 +96,14 @@
             </div>
             <div class="text-part">
                 <h5>{{product.name|truncatechars:30}}</h5>
-                <h6 style="color:#f09d51;">$ {{product.price}}</h6>
+
+                <!-- Product Price -->
+                {% if product.discount > 0 %}
+                <h6 style="color:rgb(241, 111, 36);">$ {{product.discount_price|intcomma|floatformat:2}}</h6>
+                {% else %}
+
+                <h6 style="color:rgb(241, 111, 36);">$ {{product.price|intcomma}}</h6>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -108,7 +115,14 @@
             </div>
             <div class="text-part">
                 <h5>{{product.name|truncatechars:30}}</h5>
-                <h6 style="color:#f09d51;">$ {{product.price}}</h6>
+
+                <!-- Product Price -->
+                {% if product.discount > 0 %}
+                <h6 style="color:rgb(241, 111, 36);">$ {{product.discount_price|intcomma|floatformat:2}}</h6>
+                {% else %}
+
+                <h6 style="color:rgb(241, 111, 36);">$ {{product.price|intcomma}}</h6>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -131,7 +145,14 @@
             </div>
             <div class="text-part">
                 <h5>{{product.name|truncatechars:30}}</h5>
-                <h6 style="color:#f09d51;">$ {{product.price}}</h6>
+
+                <!-- Product Price -->
+                {% if product.discount > 0 %}
+                <h6 style="color:rgb(241, 111, 36);">$ {{product.discount_price|intcomma|floatformat:2}}</h6>
+                {% else %}
+
+                <h6 style="color:rgb(241, 111, 36);">$ {{product.price|intcomma}}</h6>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -154,7 +175,14 @@
             </div>
             <div class="text-part">
                 <h5>{{product.name|truncatechars:30}} <span style="color:grey">({{oi_name_quan.1}})</span></h5>
-                <h6 style="color:#f09d51;">$ {{product.price}}</h6>
+
+                <!-- Product Price -->
+                {% if product.discount > 0 %}
+                <h6 style="color:rgb(241, 111, 36);">$ {{product.discount_price|intcomma|floatformat:2}}</h6>
+                {% else %}
+
+                <h6 style="color:rgb(241, 111, 36);">$ {{product.price|intcomma}}</h6>
+                {% endif %}
             </div>
         </div>
         {% endif %}

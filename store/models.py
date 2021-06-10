@@ -3,6 +3,8 @@ from django.db import models
 # Django default User model
 from django.contrib.auth.models import User
 
+import decimal
+
 
 class Seller(models.Model):
     user = models.OneToOneField(
@@ -82,8 +84,16 @@ class Product(models.Model):
             url = 'static/images/placeholder.png'
         return url
 
+    @property
+    def discount_price(self):
+        if self.discount > 0:
+            pro_price = decimal.Decimal(self.price) - ((decimal.Decimal(
+                self.discount)/decimal.Decimal(100)) * decimal.Decimal(self.price))
+            return pro_price
 
 # For adding multiple images for a product
+
+
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
     image = models.ImageField(null=True, blank=True)
@@ -177,7 +187,10 @@ class OrderItem(models.Model):
 
     @property
     def totalPrice(self):
-        price = self.product.price * self.quantity
+        if self.product.discount > 0:
+            price = self.product.discount_price * self.quantity
+        else:
+            price = self.product.price * self.quantity
         return price
 
 # an order can have multiple shippingAddress

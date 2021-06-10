@@ -66,12 +66,15 @@
 
             <hr>
 
-            {% if discountPrice == 0.0 %}
-            <h3 style="color:rgb(241, 111, 36);">$ {{product.price}}</h3>
-
+            <!-- Product Price -->
+            <!-- If discount is provided -->
+            {% if product.discount > 0 %}
+            <h3 style="color:rgb(241, 111, 36);"><strike>$ {{product.price|intcomma}}</strike>&nbsp&nbsp $
+                {{product.discount_price|intcomma|floatformat:2}}</h3>
             {% else %}
-            <h3 style="color:rgb(241, 111, 36);"><strike>$ {{product.price}}</strike>&nbsp&nbsp $
-                {{discountPrice|floatformat:2}}</h3>
+
+            <!-- IF discount isnot provided -->
+            <h3 style="color:rgb(241, 111, 36);">$ {{product.price|intcomma}}</h3>
             {% endif %}
 
             {% if product.quantity > 0 %}
@@ -80,7 +83,7 @@
             <h5 style="color:#F32013;">Out of stock.</h5>
             {% endif %}
 
-            {% if discountPrice > 0.0 %}
+            {% if product.discount > 0.0 %}
             <h5>Discount: {{product.discount}} %</h5>
             {% endif %}
 

@@ -332,9 +332,13 @@ header {
 .cart-row {
   display: flex;
   align-items: flex-stretch;
-  padding-bottom: 10px;
   margin-bottom: 10px;
   border-bottom: 1px solid #ececec;
+}
+
+.cart-row div {
+  margin-bottom: auto;
+  margin-top: auto;
 }
 
 .cart-row p {
