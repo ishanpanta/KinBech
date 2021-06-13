@@ -91,9 +91,3 @@ $(document).ready(function() {
     return false;
     });
     });
-
-// Dark mode
-function changeDarkMode() {
-    var element = document.body;
-    element.classList.toggle("dark-mode");
-}

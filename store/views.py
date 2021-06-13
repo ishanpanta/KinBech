@@ -353,32 +353,7 @@ def searchItems(request):
         products = Product.objects.filter(Q(name__icontains=searchProduct) | Q(
             description__icontains=searchProduct) | Q(category__title__icontains=searchProduct), disable=False)
 
-    # yo discount ko sabai vanda tala rako vane problem solve hunxa jasto lago
-
-    # NOTE: PRICE RANGE
-    price_range_list = 0
-
-    split_price_range_list = ['0', '0']
-    if request.method == "POST":
-        price_range_list = request.POST.getlist('price_range')
-
-        for price in price_range_list:
-            # replacing first-'0' with the first three number of price range
-            split_price_range_list[0] = price[0:3]
-
-            # replacing second-'0' with the remaining numbers
-            split_price_range_list[1] = price[3:len(price)]
-
-    # display selected price range products only if ...
-    if price_range_list != 0 and split_price_range_list[0] != '0' and split_price_range_list[1] != '0':
-        try:
-            products = Product.objects.filter(price__range=(
-                int(split_price_range_list[0]), int(split_price_range_list[1])))    # price_range = (min,max)
-        except:
-            pass
-    # END OF PRICE RANGE
-
-    # NOTE: BRAND WISE SEARCH
+    # NOTE: ALL BRAND NAMES
 
     # list containing all the brand names
     brand_name_of_all_product_list = []
@@ -388,23 +363,68 @@ def searchItems(request):
     for product in Product.objects.all():
         brand_name_of_all_product_list.append(product.brand)
 
-    # geting the list of the choosed brand name
-    brand_select_list = None
+    # END OF ALL BRAND NAMES
+
+    # NOTE: BRAND WISE AND PRICE RANGE SEARCH
+
+    # initilizing the brand_name to None and price_range to 0
+    brand_select_price_range_list = [None, 0]
+
+    # initilizing the price_range_list to 0
+    split_price_range_list = ['0', '0']
+
+    # if user chooses brand_name only then it's status will be changed
+    price_range = True
+
+    # geting the list of the choosed brand name and price range. (i.e.['brand_name', 'price_range'])
     if request.method == "POST":
-        brand_select_list = request.POST.getlist('brand_select')
+        brand_select_price_range_list = request.POST.getlist(
+            'price_range_brand_select')
 
-    # run only if any brand name is chooosed
-    # Displaying the products acording to the choosed brand
-    if brand_select_list != None:
         try:
-            products = Product.objects.filter(brand=brand_select_list[0])
+            price_list = []
+
+            # appending the price_range to the list so that it can iterable as required
+            price_list.append(brand_select_price_range_list[1])
+
+            # spliting the price_range to the two part. So it could be passed in queryset.
+            for price in price_list:
+
+                # replacing first-'0' of the list with the first three number of price range
+                split_price_range_list[0] = price[0:3]
+
+                # replacing second-'0' of the list with the remaining numbers
+                split_price_range_list[1] = price[3:len(price)]
+
         except:
-            pass
 
-    # END OF BRAND WISE SEARCH
+            # if user chooses brand_name only then status of price_range will be changed
+            try:
+                if brand_select_price_range_list[0] in brand_name_of_all_product_list:
+                    price_range = False
+            except:
+                pass
 
-    context = {"products": products, "cartItems": cartItems, "brand_name_of_all_product_list": list(
-        set(brand_name_of_all_product_list)), "brand_select_list": brand_select_list, "first_price_range": int(split_price_range_list[0]), "second_price_range": int(split_price_range_list[1])}
+    try:
+
+        # if user chooses brand_name only then products of that brand_name will be displayed
+        if price_range == False:
+            products = Product.objects.filter(
+                brand=brand_select_price_range_list[0])
+
+        # run only if any brand name is chooosed
+        # Displaying the products acording to the choosed brand
+        if brand_select_price_range_list[0] != None and brand_select_price_range_list[1] != 0 and split_price_range_list[0] != '0' and split_price_range_list[1] != '0':
+
+            products = Product.objects.filter(brand=brand_select_price_range_list[0], price__range=(
+                int(split_price_range_list[0]), int(split_price_range_list[1])))    # price_range = (min,max)
+    except:
+        pass
+
+    # END OF BRAND WISE AND PRICE RANGE SEARCH
+
+    context = {"products": products, "cartItems": cartItems,
+               "brand_name_of_all_product_list": list(set(brand_name_of_all_product_list)), "price_range_status": price_range, "first_price_range": int(split_price_range_list[0]), "second_price_range": int(split_price_range_list[1])}
     return render(request, "store/search.html", context)
 
 

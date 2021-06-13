@@ -24,34 +24,52 @@
 
     <div class="search_result">
 
-      <!-- Display the name of searched -->
-      {% if brand_select_list == None or brand_select_list|length == 0 and second_price_range == 0 %}
+      <!-- INITIAL SEARCH -->
+      <!-- Display the name of searched product -->
+      {% if price_range_status == True and second_price_range == 0 %}
       <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
         found for <span style="color:rgb(0, 140, 255)">"{{request.GET.search}}"</span>
       </h4>
 
-      <!-- Display name of the brand if brand is selected -->
-      {% elif brand_select_list|length > 0 and second_price_range == 0 %}
 
+      <!-- BRAND NAME -->
+      <!-- If brand is only selected -->
+      {% elif price_range_status == False and second_price_range == 0 %}
       {% for product in products|slice:":1" %}
       <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
         found for <span style="color:rgb(0, 140, 255)">"{{product.brand}}"</span>
       </h4>
       {% endfor %}
 
-      <!-- Display price range if price range is selected -->
-      {% elif brand_select_list|length == 0 and second_price_range > 0 %}
 
-      {% if first_price_range == 0 and second_price_range == 100%}
+      <!-- BRAND AND PRICE_RANGE -->
+      <!-- Display name of the brand and price range if brand and price_range is selected -->
+      {% elif price_range_status == True and second_price_range > 0 %}
+
+      <!-- PRICE RANGE: 0 to $100 -->
+      {% for product in products|slice:":1" %}
+      {% if first_price_range == 0 and second_price_range == 100 %}
       <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
-        found for <span style="color:rgb(0, 140, 255)">"Price: under ${{second_price_range}}"</span>
+        found for <span style="color:rgb(0, 140, 255)">"{{product.brand}} & Price: under ${{second_price_range}}"</span>
       </h4>
 
+
+      <!-- PRICE RANGE: above $500 -->
+      {% elif first_price_range == 500 and second_price_range == 10000 %}
+      <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
+        found for <span style="color:rgb(0, 140, 255)">"{{product.brand}} & Price: above ${{first_price_range}}"</span>
+      </h4>
+
+
+      <!-- PRICE RANGE: $100 to $500 -->
       {% else %}
       <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
-        found for <span style="color:rgb(0, 140, 255)">"Price: ${{first_price_range}} to ${{second_price_range}}"</span>
+        found for <span style="color:rgb(0, 140, 255)">"{{product.brand}} & Price: ${{first_price_range}} to
+          ${{second_price_range}}"</span>
       </h4>
+
       {% endif %}
+      {% endfor %}
 
       {% endif %}
     </div>
@@ -75,7 +93,7 @@
     <!-- If no product is displayed then this error appears -->
     {% else %}
     <div class="search_result">
-      <h3>No results for <span style="color:rgb(0, 140, 255)">"{{request.GET.search}}"</span></h3>
+      <h3>No such products<span style="color:rgb(0, 140, 255)"></span></h3>
       <p style="color:rgb(99, 95, 95)">Try checking your spelling or use more general terms</p>
     </div>
     {% endif %}
@@ -91,25 +109,45 @@
       <div class="brand-names-radio">
         <h5.5><b>Featured Brands</b></h5.5>
 
-        <!-- Brand name radio -->
+        <!-- Brand name checkbox -->
         <form action="" method="POST">
           {% csrf_token %}
           {% for brand in brand_name_of_all_product_list %}
-          <input type="radio" id="{{brand}}" name="brand_select" value="{{brand}}">
+          <input type="checkbox" id="{{brand}}" name="price_range_brand_select" value="{{brand}}">
           <label for="{{brand}}"> {{brand}}</label><br>
           {% endfor %}
+
+          <br>
+          <h5.5><b>Price</b></h5.5><br>
+          <input type="checkbox" id="under_100" name="price_range_brand_select" value="000100">
+          <label for="under_50"> under $100</label><br>
+
+          <input type="checkbox" id="100_200" name="price_range_brand_select" value="100200">
+          <label for="100_200"> $100 to $200</label><br>
+
+          <input type="checkbox" id="200_300" name="price_range_brand_select" value="200300">
+          <label for="200_300"> $200 to $300</label><br>
+
+          <input type="checkbox" id="300_400" name="price_range_brand_select" value="300400">
+          <label for="300_400"> $300 to $400</label><br>
+
+          <input type="checkbox" id="400_500" name="price_range_brand_select" value="400500">
+          <label for="400_500"> $400 to $500</label><br>
+
+          <input type="checkbox" id="500_above" name="price_range_brand_select" value="50010000">
+          <label for="500_above"> $500 & above</label><br>
 
           <br><button type="submit" class="btn btn-sm" style=" background-color:rgb(67, 228, 67);"><i
               class="fas fa-check"></i></button>
         </form>
-        <!-- End of brand name radio -->
+        <!-- End of brand name checkbox -->
       </div>
 
-      <div class="price-range">
+      <!-- <div class="price-range">
         <br>
         <h5.5><b>Price</b></h5.5>
 
-        <!-- price range radio -->
+        price range radio
         <form action="" method="POST">
           {% csrf_token %}
           <input type="radio" id="under_100" name="price_range" value="000100">
@@ -133,7 +171,7 @@
           <button type="submit" class="btn btn-sm" style=" background-color:rgb(67, 228, 67);"><i
               class="fas fa-check"></i></button>
         </form>
-      </div>
+      </div> -->
     </div>
 
     <!-- display searched products -->

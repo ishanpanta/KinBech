@@ -204,18 +204,6 @@
         setTimeout(function () {
             $('a').tooltip('dispose')
         }, 3000)
-
-
-        ////////////////////////// NOTIFICATION sound //////////////////////////
-        // sound will be played only if there is any items in the notification.
-        const notiSound = new Audio("{% static 'audio/notification.mp3' %}")
-        var totalCart = document.getElementById("total")
-
-        window.onload = function () {
-            if (totalCart.innerHTML > 0) {
-                // notiSound.play()
-            }
-        }
     </script>
 
 </body>

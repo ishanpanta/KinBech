@@ -46,6 +46,8 @@
                 <form action="{% url 'seller:seller-order-status-change' o.id %}" method="post" class="form_class">
                     {% csrf_token %}
                     <select name="status" class="form-control" style="width:auto;">
+                        <option selected="selected" disabled>Change Status</option>
+
                         {% for i,j in allstatus %}
                         {% for orderitem in orderItems %}
                         {% if forloop.first %}
