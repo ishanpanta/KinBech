@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    {% for oi in orderItem_obj|slice:":1" %}
+    <h3>Dear <b>{{oi.product.seller.user.username}}</b>,</h3>
+    {% endfor %}
+    <br>
+
+    <h4><b>DELIVERY DETAILS</b></h4>
+
+    <p><b>Name:</b> {{order_obj.customer.name}}</p>
+
+    <p><b>Shipping Address:</b> {{shippingAddress.address}}, {{shippingAddress.city}}, {{shippingAddress.state}}</p>
+
+    <p><b>Phone:</b> {{order_obj.customer.phone}}</p>
+    <p><b>Email:</b> {{order_obj.customer.user.email}}</p>
+
+
+    <br>
+    <h4><b>ORDER DETAIL</b></h4>
+
+    <p><b>Order ID:</b> ORDER_#{{order_obj.id}}</p>
+    <p><b>Ordered On: </b> {{order_obj.date_ordered}}</p>
+    <p><b>Payment Method: </b>Cash On Delivery</p>
+
+    <br>
+    <h4><b>ORDERITEM DETAIL</b></h4>
+
+    {% for oi in orderItem_obj %}
+    <p style="color:rgb(241, 111, 36);">{{oi.product.name}} &emsp; $ {{oi.product.price}} &emsp; x {{oi.quantity}}
+        &emsp; Total Price: $
+        {{oi.totalPrice}}
+    </p>
+    {% endfor %}
+
+    <br>
+    <h3>Thank You!</h3>
+    <h3>Regards,</h3>
+    <h3>KinBech Team</h3>
+</body>
+
+</html>

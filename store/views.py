@@ -6,6 +6,11 @@ from django.db.models import Q, Sum
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 
+from ecommerce.settings import EMAIL_HOST_USER
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 from .models import *
 from .forms import *
 from .utils import cartData
@@ -524,7 +529,7 @@ def processOrder(request):
     order.save()
 
     # we need to save these values to the database or to create an instance of shipping address
-    ShippingAddress.objects.create(
+    shippingAddress = ShippingAddress.objects.create(
         customer=customer,
         order=order,
         address=data['shipping']['address'],
@@ -541,6 +546,37 @@ def processOrder(request):
         product = Product.objects.get(name=name_array[i])
         product.quantity = product.quantity - int(quanity_array[i])
         product.save()
+
+    # OrderItems of the order
+    orderItems = OrderItem.objects.filter(order__id=order.id)
+
+    # NOTE SENDING EMAIL TO THE SELLER AFTER CUSTOMER buys some products
+    subject = "New Order by " + order.customer.user.username
+
+    html_message = render_to_string("store/emailMessage.html", {
+                                    'shippingAddress': shippingAddress, 'orderItem_obj': orderItems, 'order_obj': order, })
+
+    message = strip_tags(html_message)
+
+    # empty list of recepient email
+    recepient = []
+
+    for oi in orderItems:
+        seller_email = oi.product.seller.user.email
+        recepient.append(seller_email)
+
+    email = EmailMultiAlternatives(
+        subject,
+        message,
+        EMAIL_HOST_USER,
+
+        # no repeat of same email
+        list(set(recepient)),
+    )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send()
+    # End of emails
 
     return JsonResponse('Payment submitted....', safe=False)
     # maybe add orderItems to the ShippingAddress

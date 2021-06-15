@@ -183,3 +183,18 @@ MEDIA_URl = '/images/'
 # we need to configure MEDIA_ROOT to where this image gets uploaded.
 # If we donot define it then the image will be thrown into the root directory.
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+
+
+# sending EMAIL from django
+
+# email will be sent through a SMTP server
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+
+# For gmail, TLS connection is TRUE
+EMAIL_USE_TLS = True
+
+# this is port used by smtp server
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ishantesting0@gmail.com'
+EMAIL_HOST_PASSWORD = 'ishan123456789'

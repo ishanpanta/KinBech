@@ -5,6 +5,11 @@ from django.views.generic import CreateView, View, DetailView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.db.models import Sum
 
+from ecommerce.settings import EMAIL_HOST_USER
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 from store.models import *
 from store.forms import *
 
@@ -315,14 +320,40 @@ class sellerOrderStatusChange(View):
 
         # accessing ID of current page.
         order_id = self.kwargs["pk"]
-        # order_obj = Order.objects.get(id=order_id)
+        order_obj = Order.objects.get(id=order_id)
 
         new_status = request.POST.get("status")
-        # order_obj.order_status = new_status
-        # order_obj.save()
 
+        # ORDERITEM object
         orderItem_obj = OrderItem.objects.filter(
             order__id=order_id, product__seller=seller)
+
+        # SHIPPING ADDRESS object
+        shippingAddress = ShippingAddress.objects.filter(order__id=order_id)
+
+        # NOTE:SEND EMAIL
+        subject = "ORDER_#" + str(order_id) + "Order Status: " + new_status
+
+        # defing the message file and passing context
+        html_message = render_to_string('seller/emailMessage.html', {'shippingAddress': shippingAddress,
+                                                                     'orderItem_obj': orderItem_obj, 'order_obj': order_obj, 'order_id': order_id, 'seller': seller, 'new_status': new_status})
+        # striping
+        message = strip_tags(html_message)
+
+        # email of the recepient
+        recepient = order_obj.customer.user.email
+
+        # creating the email object with all info
+        email = EmailMultiAlternatives(
+            subject,
+            message,
+            EMAIL_HOST_USER,
+            [recepient],
+        )
+        email.attach_alternative(html_message, "text/html")
+        email.send()
+
+        # NOTE:END OF SEND EMAIL
 
         for orderItem in orderItem_obj:
             if orderItem.orderItem_order_status == "Order Canceled":
