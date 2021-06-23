@@ -69,7 +69,7 @@ class sellerRegister(CreateView):
 
     def form_valid(self, form):
         uname = form.cleaned_data.get("username")
-        messages.success(self.request, "Account was created for ", uname)
+        messages.success(self.request, "Account was created for " + uname)
 
         user = User.objects.create_user(
             form.cleaned_data.get("username"),

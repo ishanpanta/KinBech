@@ -1,0 +1,156 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: borderbox;
+  font-family: "Roboto", sans-serif;
+}
+
+body {
+  /* background-color: rgb(51, 47, 47); */
+  background-color: rgb(218, 213, 213);
+}
+section {
+  position: relative;
+  width: 70%;
+  height: 80vh;
+  display: flex;
+
+  /* Center vertically and horizontally */
+  position: absolute;
+  top: 13%;
+  left: 16%;
+  margin: -25px 0 0 -25px; /* apply negative top and left margins to truly center the element */
+}
+section .img1 {
+  position: relative;
+  width: 50%;
+  height: 100%;
+}
+section .img1:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+section .img1 img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-radius: 20px 0px 0px 20px;
+  height: 80vh;
+  object-fit: cover;
+}
+section .content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0px 20px 20px 0px;
+  width: 50%;
+  height: 100%;
+  background-color: #a8b1ab;
+  /* background-color: white; */
+  /* background-color: #7b867f; */
+  /* background-color: #1cd25c; */
+}
+section .content .form {
+  width: 50%;
+}
+section .content .form h1 p a {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+  font-size: 3.5em;
+  margin-bottom: 5px;
+  display: inline-block;
+  letter-spacing: 1px;
+  transition: 0.5s all ease-in-out;
+}
+section .content .form h1 p a:hover {
+  color: #e94b3cff;
+}
+section .content .form h2 {
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+  font-size: 1.8em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  border-bottom: 4px solid black;
+  display: inline-block;
+  letter-spacing: 1px;
+}
+
+section .content .form .input {
+  margin-bottom: 20px;
+}
+section .content .form .remember span {
+  font-size: 16px;
+  margin-bottom: 5px;
+  margin-left: 2.5px;
+  display: inline-block;
+  color: black;
+  font-weight: 300;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+section .content .form .input input {
+  width: 100%;
+  padding: 10px 20px;
+  outline: none;
+  font-weight: 400;
+  border: 1px solid black;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: black;
+  background: transparent;
+  border-radius: 35px;
+}
+section .content .form .input input[type="submit"] {
+  background: rgb(31, 30, 30);
+  color: rgb(255, 255, 255);
+  outline: none;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.7s ease-in-out;
+}
+section .content .form .input input[type="submit"]:hover {
+  background: #1cd25c;
+  color: black;
+  /* background-color: #e94b3cff; */
+}
+section .content .form .remember {
+  margin-bottom: 10px;
+  color: #607d8b;
+  font-weight: 400;
+  font-size: 14px;
+}
+section .content .form .input p {
+  color: black;
+}
+section .content .form .input p a {
+  color: #007bff;
+  text-decoration: none;
+  transition: all 0.5s;
+}
+section .content .form .input p a:hover {
+  color: black;
+  text-decoration: underline;
+}
+.errorlist {
+  color: red;
+  list-style: none;
+}
+#messages {
+  width: 100%;
+  background-color: grey;
+  color: #fff;
+  padding: 8px;
+  margin-top: 5px;
+  text-align: center;
+}
