@@ -3,6 +3,8 @@ from django.db import models
 # Django default User model
 from django.contrib.auth.models import User
 
+from django.core.validators import FileExtensionValidator
+
 import decimal
 
 
@@ -12,7 +14,8 @@ class Seller(models.Model):
     name = models.CharField(max_length=50, null=True)
     phone = models.CharField(max_length=40, null=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, validators=[
+                              FileExtensionValidator(['png', 'jpg', 'jpeg'])])
 
     def __str__(self):
         return self.user.username
@@ -40,7 +43,8 @@ class Customer(models.Model):
 class Category(models.Model):
     title = models.CharField(max_length=50, null=True)
     slug = models.SlugField(unique=True, null=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, validators=[
+                              FileExtensionValidator(['png', 'jpg', 'jpeg'])])
 
     def __str__(self):
         return self.title
@@ -62,7 +66,8 @@ class Product(models.Model):
     quantity = models.PositiveIntegerField(default=1, null=True)
     brand = models.CharField(max_length=200, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, validators=[
+                              FileExtensionValidator(['png', 'jpg', 'jpeg'])])
     description = models.TextField(null=True)
     discount = models.FloatField(default=0)
     warranty = models.CharField(max_length=50, null=True, blank=True)
@@ -96,7 +101,8 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, validators=[
+                              FileExtensionValidator(['png', 'jpg', 'jpeg'])])
 
     def __str__(self):
         return self.product.name
