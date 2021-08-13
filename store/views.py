@@ -428,8 +428,13 @@ def searchItems(request):
 
     # END OF BRAND WISE AND PRICE RANGE SEARCH
 
-    context = {"products": products, "cartItems": cartItems,
-               "brand_name_of_all_product_list": list(set(brand_name_of_all_product_list)), "price_range_status": price_range, "first_price_range": int(split_price_range_list[0]), "second_price_range": int(split_price_range_list[1])}
+    try:
+        context = {"products": products, "cartItems": cartItems,
+                   "brand_name_of_all_product_list": list(set(brand_name_of_all_product_list)), "price_range_status": price_range, "first_price_range": int(split_price_range_list[0]), "second_price_range": int(split_price_range_list[1])}
+    except:
+        context = {"products": products, "cartItems": cartItems,
+                   "brand_name_of_all_product_list": list(set(brand_name_of_all_product_list)), "price_range_status": price_range, "flag": True, }
+
     return render(request, "store/search.html", context)
 
 

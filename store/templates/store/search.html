@@ -26,7 +26,7 @@
 
       <!-- INITIAL SEARCH -->
       <!-- Display the name of searched product -->
-      {% if price_range_status == True and second_price_range == 0 %}
+      {% if price_range_status == True and second_price_range == 0 or flag == True %}
       <h4 style="width:900px;"><span style="color:rgb(99, 95, 95)">{{ products.count }}</span> items
         found for <span style="color:rgb(0, 140, 255)">"{{request.GET.search}}"</span>
       </h4>
@@ -93,7 +93,7 @@
     <!-- If no product is displayed then this error appears -->
     {% else %}
     <div class="search_result">
-      <h3>No such products<span style="color:rgb(0, 140, 255)"></span></h3>
+      <h3>Product not found<span style="color:rgb(0, 140, 255)"></span></h3>
       <p style="color:rgb(99, 95, 95)">Try checking your spelling or use more general terms</p>
     </div>
     {% endif %}
