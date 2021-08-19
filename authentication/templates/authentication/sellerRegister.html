@@ -5,6 +5,8 @@
 <head>
 	<title>KinBech</title>
 	<link rel="stylesheet" type="text/css" href="{% static 'css/authentication.css' %}">
+
+	<link rel="shortcut icon" type="image/x-icon" href="{% static 'images/logo.png' %}" />
 </head>
 
 <body>
@@ -14,10 +16,10 @@
 				<img style="height:89vh;" src=" {% static 'images/auth-image.jpg' %}">
 			</div>
 			<div class="content">
-				<div class="form">
-					<h1>
-						<p style="margin-bottom: 0px;"><a href="{% url 'app:store' %}">KinBech</a></p>
-					</h1>
+				<div class="form" style="display: flex; align-items: center; flex-direction: column;">
+
+					<a href="{% url 'app:store' %}"><img src="{% static 'images/logo2.png' %}" alt="" width="80px"></a>
+
 					<br>
 					<h2 style="font-size: 1.4em;">REGISTER SELLER</h2>
 
@@ -41,14 +43,14 @@
 						<div class="input">
 							{{form.phone}}
 						</div>
-						<div class="input">
+						<div class="input" style="position:relative; left: 25px;">
 							<input type="submit" value="Register" name="">
 						</div>
 
 						<!-- Error Message -->
 						{{form.errors}}
 
-						<div class="input">
+						<div class="input" style="position:relative; left: 30px;">
 							<p>Already have an account? <a href="{% url 'auth:seller-login' %}"> Login</a></p>
 						</div>
 
@@ -65,7 +67,7 @@
 		form_fields[2].placeholder = 'Username..';
 		form_fields[3].placeholder = 'Email...';
 		form_fields[4].placeholder = 'Password...';
-		form_fields[5].placeholder = 'Conform Password...';
+		form_fields[5].placeholder = 'Confirm Password...';
 		form_fields[6].placeholder = 'Contact Number...';
 
 

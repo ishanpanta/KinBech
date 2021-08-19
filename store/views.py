@@ -102,11 +102,9 @@ def store(request):
 
     # MOST VIEWED products
     most_viewed_products = Product.objects.all().order_by("-view_count")
-
     # The end OF MOST VIEWED
 
     # BEST SELLING products
-
     # list of name, total_quantity and price of ordered products
     orderItem_name = []
     orderItem_total_quantity = []
@@ -153,6 +151,7 @@ def store(request):
 
         # sending all the cookie items to the createUpdateOrder function
         # NOTE: cart ko quantity kati xa tesko anusar cart ma banuna
+        # 'i' means the productID
         for i in cart:
             quantity = cart[i]['quantity']
             createUpdateOrder(request, i, '', quantity)
@@ -170,8 +169,6 @@ def categoryProducts(request, slug):
     data = cartData(request)
 
     cartItems = data['cartItems']
-    order = data['order']
-    items = data['items']
 
     products = Product.objects.filter(
         category__slug=slug, disable=False).order_by("id")
@@ -192,6 +189,7 @@ def customerProfile(request):
     cartItems = data['cartItems']
 
     customer = request.user.customer
+
     # orders expect the order_status="Order Canceled"
     # orders=Order.objects.filter(customer=customer, complete=True,).exclude(order_status="Order Canceled").order_by("-id")
     orderItems = OrderItem.objects.filter(order__customer=customer, order__complete=True).exclude(
@@ -224,18 +222,24 @@ def postComment(request):
         product = Product.objects.get(id=productId)
         parentSno = request.POST.get("parentSno")
 
+        # this is the comment
         if parentSno == "":
             comment = ProductComment.objects.create(
                 comment=comment, user=user, product=product)
             comment.save()
+
+        # this is the reply
         else:
             parent = ProductComment.objects.get(sno=parentSno)
             comment = ProductComment.objects.create(
                 comment=comment, user=user, product=product, parent=parent)
             comment.save()
 
+    # if seller is posting the comment then redirect to this path
     if Seller.objects.filter(user__username=user.username):
         return redirect(f"../seller/seller-product-detail/{product.slug}/")
+
+    # if customer is posting the comment then redirect to this path
     elif Customer.objects.filter(user__username=user.username):
         return redirect(f"/product-detail/{product.slug}/")
 
@@ -244,6 +248,7 @@ def postComment(request):
 # cancel the order with the click of the button
 def cancelOrder(request, pk):
     orderItems = OrderItem.objects.filter(id=pk)
+
     for orderItem in orderItems:
         orderItem.orderItem_order_status = "Order Canceled"
         orderItem.noti_status = True
@@ -447,6 +452,7 @@ def createUpdateOrder(request, productId, action, quantity=0):
         customer=customer, complete=False)
 
     # for cookies OrderItems
+    # Guest user
     if quantity != 0:
 
         # if orderItem from the cookie already exits iin the  customer cart then new orderItem willnot
@@ -481,12 +487,13 @@ def createUpdateOrder(request, productId, action, quantity=0):
                 orderItem, created = OrderItem.objects.get_or_create(
                     order=order, product=product, quantity=product.quantity)
 
-    # for those items added from the user in site
+    # Login User
     else:
         orderItem, created = OrderItem.objects.get_or_create(
             order=order, product=product)
 
     if action == 'add':
+        # orderItem quantity cannot be greater than defined (database) quantity
         if orderItem.quantity >= product.quantity:
             orderItem.quantity = orderItem.quantity
 
@@ -584,4 +591,3 @@ def processOrder(request):
     # End of emails
 
     return JsonResponse('Payment submitted....', safe=False)
-    # maybe add orderItems to the ShippingAddress

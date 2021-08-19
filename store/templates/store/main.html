@@ -19,7 +19,7 @@
     integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
 
   <!-- Add logo to the broswer -->
-  <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/favicon.png' %}" />
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/logo.png' %}" />
 
   <script type="text/javascript">
     var user = '{{request.user}}'
@@ -93,8 +93,8 @@
 
   <!-- navbar -->
   <header>
-    <a href="{% url 'app:store' %}" class="site-logo" aria-label="homepage">KinBech</a>
-    <!-- <img src="logo.png" alt="" width="65px"> -->
+    <!-- <a href="{% url 'app:store' %}" class="site-logo" aria-label="homepage">KinBech</a> -->
+    <a href="{% url 'app:store' %}"><img src="{% static 'images/logo.png' %}" alt="" width="75px"></a>
 
     <div class="search-container">
       <form action="{% url 'app:search' %}" method="GET">

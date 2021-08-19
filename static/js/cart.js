@@ -58,10 +58,11 @@ function updateUserOrder(productId, action) {
             'Content-Type':'application/json',
             'X-CSRFToken':csrftoken,
         },
-        body:JSON.stringify({'productId':productId, 'action':action})      // we cannot send object to the backend we need to send it as the string
+        // we cannot send object to the backend we need to send it as the string
+        body:JSON.stringify({'productId':productId, 'action':action})      
     })
 
-    // return a promise. We will get the response after we send the data to the views
+    // returns a promise. We will get the response after we send the data to the backend
     .then((response) => {
         return response.json()       // converted response to the json value
     })

@@ -71,7 +71,6 @@ def graphs(request, x_component, y_component, graph_title, xaxis_title, yaxis_ti
 def sellerHome(request):
     a = SellerRequiredMixin()
     seller = request.user.seller
-    print(seller)
 
     # orderItems = OrderItem.objects.filter(product__seller=seller, order__order_status="Order Received").order_by("-id")
     orders = Order.objects.filter(orderitem__product__seller=seller, complete=True,
@@ -200,13 +199,11 @@ def sellerHome(request):
         trace_layout_list = graphs(request, orderItem_name, orderItem_total_quantity, graph_title='Total Quantity Sold',
                                    xaxis_title="Product's Name", yaxis_title='Quantity', graph_type="scatter")
 
-    title = "Total Quantity Sold"
-
     # # # END OF Sold Product's Quantity # # #
 
     context = {"orders": orders, "seller": seller,
                'orderItemQuantity': orderItemQuantity, 'totalPrice': totalPrice, "trace": trace_layout_list[0],
-               "layout": trace_layout_list[1], "title": title}
+               "layout": trace_layout_list[1]}
 
     return render(request, "seller/sellerHome.html", context)
 
@@ -355,6 +352,7 @@ class sellerOrderStatusChange(View):
 
         # NOTE:END OF SEND EMAIL
 
+        # changing the status of the order
         for orderItem in orderItem_obj:
             if orderItem.orderItem_order_status == "Order Canceled":
                 orderItem.orderItem_order_status == "Order Canceled"

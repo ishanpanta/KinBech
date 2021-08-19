@@ -1,3 +1,6 @@
+# Models define the structure of stored data, including the field types, their maximum
+# size, default values,etc
+
 from django.db import models
 
 # Django default User model
@@ -112,8 +115,13 @@ class ProductImage(models.Model):
 class ProductComment(models.Model):
     sno = models.AutoField(primary_key=True)
     comment = models.TextField(null=True)
+
+    # delete all the comment done by this user if this user is deleted.
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
+
+    # it help to differentiate between comment or reply
+    # if parent is empty then it is comment else it is reply
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 

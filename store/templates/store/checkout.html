@@ -138,17 +138,20 @@
 
 
 		// fetch api
+		// this is where we want to send data
 		var url = '/process_order/'
 
 		fetch(url, {
-			method: 'POST',
-			headers: {
+			method: 'POST',		// POST is used to send data to the server.
+			headers: {			// we need to tell fetch, we are going to be passing JSON
 				'Content-Type': 'application/json',
 				'X-CSRFToken': csrftoken,
 			},
+			// we cannot send object to the backend we need to send it as the string
 			body: JSON.stringify({ 'form': userFormData, 'shipping': shippingInfo, 'productNameArray': productNameArray, 'productQuantityArray': productQuantityArray, }),
 		})
 
+			// returns a promise. We will get the response after we send the data to the backend
 			.then((response) => response.json())
 
 			.then((data) => {

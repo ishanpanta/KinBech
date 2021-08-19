@@ -5,6 +5,8 @@
 <head>
 	<title>KinBech</title>
 	<link rel="stylesheet" type="text/css" href="{% static 'css/authentication.css' %}">
+
+	<link rel="shortcut icon" type="image/x-icon" href="{% static 'images/logo.png' %}" />
 </head>
 
 <body>
@@ -14,10 +16,9 @@
 				<img src="{% static 'images/auth-image.jpg' %}">
 			</div>
 			<div class="content">
-				<div class="form">
-					<h1>
-						<p><a href="{% url 'app:store' %}">KinBech</a></p>
-					</h1>
+				<div class="form" style="display: flex; align-items: center; flex-direction: column;">
+					<a href="{% url 'app:store' %}"><img src="{% static 'images/logo2.png' %}" alt="" width="95px"></a>
+
 					<br>
 					<h2>Get started selling on KinBech</h2>
 
@@ -37,7 +38,7 @@
 								<span>Remember me</span>
 							</label>
 						</div>
-						<div class="input">
+						<div class="input" style="position:relative; left: 25px;">
 							<input type="submit" value="Login" name="">
 						</div>
 
@@ -45,7 +46,7 @@
 						<p id="messages">{{message}}</p>
 						{% endfor %}
 
-						<div class="input">
+						<div class="input" style="position:relative; left: 40px;">
 							<p>Don't have an account? <a href="{% url 'auth:seller-register' %}"> Sign Up</a></p>
 						</div>
 

@@ -158,7 +158,7 @@ class ProductForm(forms.ModelForm):
         fields = ["name", "slug", "price", "quantity", "discount", "category", "image",
                   "description", "warranty", "return_policy"]
 
-        # if we wants to contumize our form fields then we can define our widgets
+        # to contumize our form fields, widgets is defined
         widgets = {
             "name": forms.TextInput(attrs={
                 # form-control class is a bootstrap class which will make our form responsive

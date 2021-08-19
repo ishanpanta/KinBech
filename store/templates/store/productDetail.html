@@ -106,6 +106,7 @@
     <div class="container">
         <h2>Reviews of {{product.name}} ({{comments.count}})</h2>
 
+        <!-- comment form -->
         {% if user.is_authenticated %}
         <form action="/postComment/" method="post">
             {% csrf_token %}
@@ -145,6 +146,7 @@
                     <div class="collapse" id="replyBox{{comment.sno}}">
                         <div class="card card-body my-2">
 
+                            <!-- reply form -->
                             <form action="/postComment/" method="post">
                                 {% csrf_token %}
                                 <div class="form-group">

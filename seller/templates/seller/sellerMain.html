@@ -20,6 +20,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/sellerStyle.css' %}">
 
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'images/logo.png' %}" />
+
     <!-- Plotly js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
@@ -35,8 +37,9 @@
         </label>
 
         <!-- <div class="left_area"> -->
-        <a href="{% url 'seller:seller-home' %}" class="site-logo" aria-label="homepage"
-            style="font-size:22px;">KinBech</a>
+        <!-- <a href="{% url 'seller:seller-home' %}" class="site-logo" aria-label="homepage"
+            style="font-size:22px;">KinBech</a> -->
+        <a href="{% url 'seller:seller-home' %}"><img src="{% static 'images/logo.png' %}" alt="" width="50px"></a>
         <!-- </div> -->
 
         <!-- Logout And Notification Icon -->
