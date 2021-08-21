@@ -11,3 +11,4 @@ psycopg2 == 2.8.6
 rope == 0.18.0
 black == 20.8b1
 autopep8 == 1.5.7
+whitenoise == 5.3.0
