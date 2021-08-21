@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '+f6+4ghn_=hza4oqj74w45#lk-x%o_#xi%)f-fgm0e$q5um8*#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['kinbech-django.herokuapp.com', '127.0.0.1']
 
