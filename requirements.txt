@@ -1,0 +1,14 @@
+python == 3.9
+Django == 3.1.4
+Pillow == 8.1.2
+django-plotly-dash == 1.6.4
+channels == 3.0.3
+daphne == 3.0.2
+gunicorn == 20.1.0
+redis == 3.5.3
+django-redis == 4.12.1
+channels-redis == 3.2.0
+psycopg2 == 2.8.6
+rope == 0.18.0
+black == 20.8b1
+autopep8 == 1.5.7
